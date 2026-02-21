@@ -1,0 +1,31 @@
+conf:
+  undefined_columns: "keep"
+  on_duplicate_rows:
+    tactic: "drop_extras"
+    subset: ["id"]
+
+columns:
+  id:
+    dtype: "int"
+  salary:
+    dtype: float
+    on_null:
+      tactic: fill_value
+      value: 0
+    constraints:
+      min_policy:
+        threshold: 20000
+        violate_action:
+          tactic: fill_value
+          value: 20000
+
+pipeline:
+  - filter: "age >= 18"
+  - mutate:
+      annual_bonus: "salary * 0.10"
+      total_comp: "salary + annual_bonus"
+  - rename:
+      total_comp: "total_compensation"
+  - sort:
+      by: "total_compensation"
+      order: "desc"

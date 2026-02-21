@@ -1,0 +1,9 @@
+id,name,age,email,role,salary,department,signup_date
+1,Alice,30,alice@example.com,admin,120000.50,IT,2023-01-15
+2,Bob,,bob@invalid,user,45000,Sales,2023-02-28
+3,Charlie,15,charlie@example.com,user,15000,HR,2023-03-10
+4,David,50,david@example.com,super_admin,500000,IT,2022-12-01
+5,Eve,28,eve@example.com,guest,0,Marketing,2023-05-20
+1,Alice,30,alice@example.com,admin,120000.50,IT,2023-01-15 
+6,Frank,45,frank@example.com,user,90000,Sales,2023-08-30
+7,Grace,-5,grace@example.com,user,,IT,2023-09-12

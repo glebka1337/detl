@@ -1,0 +1,23 @@
+[project]
+name = "sheet-etl"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "gspread>=6.2.1",
+    "polars>=1.38.1",
+    "pydantic>=2.12.5",
+    "pyyaml>=6.0.3",
+    "rich>=14.3.3",
+    "typer>=0.24.0",
+    "rich>=13.0.0",
+]
+
+[project.scripts]
+detl = "detl.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+]

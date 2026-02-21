@@ -1,0 +1,33 @@
+conf:
+  undefined_columns: "drop"
+  on_duplicate_rows:
+    tactic: "drop_extras"
+    subset: ["id"]
+
+columns:
+  id:
+    dtype: int
+  name:
+    dtype: string
+    constraints:
+      min_length:
+        length: 2
+        violate_action:
+          tactic: drop_row
+  age:
+    dtype: int
+    on_null:
+      tactic: fill_median
+    constraints:
+      min_policy:
+        threshold: 18
+        violate_action:
+          tactic: drop_row # Underage users are dropped
+  role:
+    dtype: string
+    constraints:
+      allowed_values:
+        values: ["admin", "user", "guest"]
+        violate_action:
+          tactic: fill_value
+          value: "guest"
