@@ -62,6 +62,39 @@ detl --config contract.yml --input raw.csv --output clean_data.parquet
 
 The CLI handles smart I/O streaming automatically, figuring out `.csv` vs `.parquet` via file extensions and evaluating the pipeline gracefully.
 
+## Python Library API
+
+Besides the CLI, `detl` is built as a highly extensible Python library. Data Engineers can import it to clean their existing `pl.DataFrame` or `pl.LazyFrame` instantly.
+
+```python
+import polars as pl
+from detl import DetlEngine, Manifesto
+
+# 1. Parse your declarative YAML
+manifest = Manifesto.parse_file("contract.yml")
+
+# 2. Spin up the Detl Engine
+engine = DetlEngine(manifest)
+
+# 3. Clean Polars Dataframes lazily!
+df = pl.scan_csv("raw.csv")
+clean_df = engine.execute(df)
+
+# Write to disk or memory
+clean_df.sink_parquet("clean_data.parquet")
+```
+
+## Syntax Reference Guides
+
+To master building complex manifests and handling type safety seamlessly, refer to the documentation suite in `docs/`:
+
+1. [01_configuration.md](docs/01_configuration.md) - Global parsing & deduplication options.
+2. [02_columns_and_types.md](docs/02_columns_and_types.md) - Casting logic and date formatting.
+3. [03_null_tactics.md](docs/03_null_tactics.md) - Comprehensive handling of anomalies (statistically and statically).
+4. [04_constraints.md](docs/04_constraints.md) - Validation bounds, regex matches, and mathematical assertions.
+5. [05_pipeline.md](docs/05_pipeline.md) - Utilizing final SQL execution boundaries.
+6. [03_kitchen_sink.yml](examples/03_kitchen_sink.yml) - A heavily annotated 100-line example combining all features.
+
 ## Architecture Guidelines for Developers
 
 The inner engine relies on strictly coupled Registry routines isolating data transformations by context. Emojis and unmaintainable `if-else` dictionaries are entirely stripped from the source codebase. 

@@ -1,0 +1,8 @@
+id,name,email,age,balance,signup_date
+1,Alice,alice@example.com,28,150.5,2023-01-15
+2,Bob,bobexample.com,35,,
+3,Charlie,charlie@test.org,-5,200.0,2023-02-28
+4,David,david@example.com,17,-10.0,2023-03-15
+4,David,david@example.com,17,-10.0,2023-03-15
+5,Eve,eve@hacker.net,42,1000.99,2023/04/01
+,,,,,

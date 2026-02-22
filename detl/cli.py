@@ -117,6 +117,9 @@ def main():
         else:
             raise ValueError(f"Unsupported output format: {out_ext}. Supported formats are .csv and .parquet")
             
+    except pl.exceptions.PolarsError as e:
+        console.print(f"[error]Polars evaluation error during save:[/error] {e}")
+        sys.exit(1)
     except Exception as e:
         console.print(f"[error]Error writing data:[/error] {e}")
         sys.exit(1)

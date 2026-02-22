@@ -1,0 +1,83 @@
+# Global Configuration Block
+# Defines behavior before column mapping begins
+conf:
+  undefined_columns: "drop" # Drop anything not in the 'columns' section below
+  on_duplicate_rows:
+    tactic: "drop_extras"
+    subset: ["user_id"] # Keeps the first user_id, drops subsequent exact match IDs
+
+# Column Schema Block
+# Defines DType mappings, null imputation tricks, and final constraint policies
+columns:
+  user_id:
+    dtype: int
+    constraints:
+      min_policy:
+        threshold: 1
+        violate_action:
+          tactic: drop_row # Negative IDs are corrupt, obliterate row
+          
+  name:
+    dtype: string
+    constraints:
+      min_length:
+        length: 2
+        violate_action:
+          tactic: fill_value
+          value: "Anonymous" # Fixes names like "A" or "" 
+          
+  age:
+    dtype: int
+    on_null:
+      tactic: fill_median # Automatically imputes empty ages via the dataset average
+    constraints:
+      min_policy:
+        threshold: 18
+        violate_action:
+          tactic: fill_value
+          value: 18 # Artificially cap underages to 18 minimum
+      max_policy:
+        threshold: 99
+        violate_action:
+          tactic: drop_row # Data is junk if age is 120
+          
+  country:
+    dtype: string
+    on_null:
+      tactic: fill_most_frequent # Defaults empty country to wherever highest traffic is from
+      
+  salary:
+    dtype: float
+    on_null:
+      tactic: fill_min # Replaces null salary with lowest possible.
+      
+  role:
+    dtype: string
+    constraints:
+      allowed_values:
+        values: ["admin", "user", "guest"]
+        violate_action:
+          tactic: fill_value
+          value: "guest" # Automatically sanitizes dirty strings "Admin1", "USER", handling defaults
+
+# Pipeline Engineering
+# All data here is mathematically and securely guaranteed to be clean.
+pipeline:
+  # 1. SQL Native Filtering
+  - filter: "role = 'user' OR role = 'admin'"
+  
+  # 2. SQL Native Mutating (Creating new columns)
+  - mutate:
+      # Use pure mathematical SQL logic inside strings.
+      salary_bonus_pool: "salary * 0.15"
+      total_comp: "salary + salary_bonus_pool"
+      is_highly_compensated: "total_comp > 150000"
+      
+  # 3. Simple JSON Rename Mapping
+  - rename:
+      total_comp: "total_compensation"
+      
+  # 4. Final Ordered Sortings
+  - sort:
+      by: "total_compensation"
+      order: "desc"

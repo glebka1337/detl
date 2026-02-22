@@ -1,0 +1,5 @@
+id,name,email,age,balance,signup_date,is_premium
+3,Charlie,charlie@test.org,18.0,200.0,2023-02-28,true
+1,Alice,alice@example.com,28.0,150.5,2023-01-15,true
+4,David,david@example.com,18.0,0.0,2023-03-15,false
+5,Eve,eve@hacker.net,42.0,1000.99,,true

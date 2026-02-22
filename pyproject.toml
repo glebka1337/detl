@@ -1,9 +1,13 @@
 [project]
-name = "sheet-etl"
+name = "detl"
 version = "0.1.0"
-description = "Add your description here"
+description = "Declarative ETL tool for blazing-fast, strictly typed Data Contracts powered by Polars and Pydantic."
 readme = "README.md"
-requires-python = ">=3.12"
+authors = [
+    { name = "Gleb", email = "gleb@example.com" }
+]
+requires-python = ">=3.10"
+urls = { Repository = "https://github.com/gleb/detl" }
 dependencies = [
     "gspread>=6.2.1",
     "polars>=1.38.1",

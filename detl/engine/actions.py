@@ -1,6 +1,6 @@
 import polars as pl
 from typing import Callable, Union, Dict
-from detl.schema import StringViolateAction, NumericViolateAction
+from detl.schema.common import StringViolateAction, NumericViolateAction
 from detl.constants import StringActionTactic, NumericActionTactic
 
 ActionHandler = Callable[

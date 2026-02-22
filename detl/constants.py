@@ -14,6 +14,8 @@ class NullTactic(str, Enum):
     FILL_VALUE = "fill_value"
     FILL_MEAN = "fill_mean"
     FILL_MEDIAN = "fill_median"
+    FILL_MAX = "fill_max"
+    FILL_MIN = "fill_min"
     FILL_MOST_FREQUENT = "fill_most_frequent"
     FFILL = "ffill"
     BFILL = "bfill"

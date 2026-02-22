@@ -1,0 +1,41 @@
+conf:
+  undefined_columns: "drop"
+  on_duplicate_rows:
+    tactic: "fail"
+    subset: ["tx_id"]
+
+columns:
+  tx_id:
+    dtype: string
+  
+  user_id:
+    dtype: int
+    on_null:
+      tactic: "fail"
+
+  amount:
+    dtype: float
+    constraints:
+      min_policy:
+        threshold: 0.1
+        violate_action:
+          tactic: "fail"
+
+  currency:
+    dtype: string
+    constraints:
+      allowed_values:
+        values: ["USD", "EUR", "GBP"]
+        violate_action:
+          tactic: "fail"
+
+  status:
+    dtype: string
+
+  timestamp:
+    dtype: datetime
+    format:
+      input: "%Y-%m-%dT%H:%M:%S"
+      output: "%Y-%m-%d %H:%M:%S"
+      on_parse_error:
+        tactic: "fail"

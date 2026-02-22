@@ -2,15 +2,10 @@ import yaml
 import pytest
 from pathlib import Path
 from pydantic import ValidationError
-from detl.schema import (
-    Manifesto,
-    ColumnDef,
-    NullPolicy,
-    MinPolicy,
-    AllowedValuesPolicy,
-    NumericViolateAction,
-    StringViolateAction
-)
+from detl.schema.core import Manifesto, ColumnDef
+from detl.schema.nulls import NullPolicy
+from detl.schema.constraints import MinPolicy, AllowedValuesPolicy
+from detl.schema.common import NumericViolateAction, StringViolateAction
 
 def test_valid_manifest_example():
     yaml_content = """
@@ -100,7 +95,7 @@ def test_valid_manifest_example():
 
 
 def test_invalid_string_constraint():
-    with pytest.raises(ValidationError, match="min/max policy cannot be applied to 'string' dtype."):
+    with pytest.raises(ValidationError, match="min/max policy cannot be applied to 'DType.STRING' dtype"):
         ColumnDef(
             dtype="string",
             constraints={
@@ -111,6 +106,43 @@ def test_invalid_string_constraint():
             }
         )
 
+def test_invalid_string_min_max_policy():
+    yaml_content = """
+    columns:
+      name:
+        dtype: string
+        constraints:
+          min_policy:
+            threshold: 5
+            violate_action:
+              tactic: drop_row
+    """
+    with pytest.raises(ValidationError) as exc:
+        Manifesto(**yaml.safe_load(yaml_content))
+    assert "min/max policy cannot be applied to 'DType.STRING'" in str(exc.value)
+
+def test_invalid_string_fill_mean_null_tactic():
+    yaml_content = """
+    columns:
+      title:
+        dtype: string
+        on_null:
+          tactic: fill_mean
+    """
+    with pytest.raises(ValidationError) as exc:
+        Manifesto(**yaml.safe_load(yaml_content))
+    assert "cannot be used on dtype" in str(exc.value)
+
+def test_valid_date_fill_max_null_tactic():
+    yaml_content = """
+    columns:
+      signup:
+        dtype: date
+        on_null:
+          tactic: fill_max
+    """
+    # Should not raise
+    Manifesto(**yaml.safe_load(yaml_content))
 def test_invalid_numeric_constraint():
     with pytest.raises(ValidationError, match="Regex constraints can only be applied to 'string' dtype."):
         ColumnDef(

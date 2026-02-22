@@ -2,7 +2,7 @@ import polars as pl
 from pathlib import Path
 from typing import Callable, Any, Dict
 
-from detl.schema import (
+from detl.schema.constraints import (
     ConstraintsDef, MinPolicy, MaxPolicy, RegexPolicy, 
     StringLengthPolicy, AllowedValuesPolicy, CustomExprPolicy, UniqueConstraint
 )

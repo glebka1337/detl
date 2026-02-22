@@ -1,0 +1,74 @@
+conf:
+  undefined_columns: "drop"
+  on_duplicate_rows:
+    tactic: "drop_extras"
+  defaults:
+    int:
+      on_null:
+        tactic: "fill_median"
+    float:
+      on_null:
+        tactic: "fill_mean"
+
+columns:
+  id:
+    dtype: int
+    on_null:
+      tactic: "drop_row"
+  
+  name:
+    dtype: string
+    on_null:
+      tactic: "fill_value"
+      value: "Unknown"
+    constraints:
+      min_length:
+        length: 2
+        violate_action:
+          tactic: "fill_value"
+          value: "Unknown"
+  
+  email:
+    dtype: string
+    on_null:
+      tactic: "drop_row"
+    constraints:
+      regex:
+        pattern: "^[\\w\\.-]+@[\\w\\.-]+\\.\\w+$"
+        violate_action:
+          tactic: "drop_row"
+
+  age:
+    dtype: int
+    constraints:
+      min_policy:
+        threshold: 18
+        violate_action:
+          tactic: "fill_value"
+          value: 18
+      max_policy:
+        threshold: 100
+        violate_action:
+          tactic: "fill_value"
+          value: 100
+
+  balance:
+    dtype: float
+    constraints:
+      min_policy:
+        threshold: 0.0
+        violate_action:
+          tactic: "fill_value"
+          value: 0.0
+
+  signup_date:
+    dtype: date
+    format:
+      input: "%Y-%m-%d"
+      output: "%Y-%m-%d"
+      on_parse_error:
+        tactic: "drop_row"
+
+pipeline:
+  - mutate:
+      is_premium: "balance > 100"

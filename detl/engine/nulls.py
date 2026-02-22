@@ -1,7 +1,7 @@
 import polars as pl
 from typing import Callable, Dict
 
-from detl.schema import NullPolicy
+from detl.schema.nulls import NullPolicy
 from detl.constants import NullTactic
 
 NullHandler = Callable[[pl.DataFrame, str, NullPolicy], pl.DataFrame]
@@ -42,6 +42,14 @@ def _handle_fill_mean(df: pl.DataFrame, col_name: str, policy: NullPolicy) -> pl
 @register_null_handler(NullTactic.FILL_MEDIAN)
 def _handle_fill_median(df: pl.DataFrame, col_name: str, policy: NullPolicy) -> pl.DataFrame:
     return df.with_columns(pl.col(col_name).fill_null(pl.col(col_name).median()))
+
+@register_null_handler(NullTactic.FILL_MAX)
+def _handle_fill_max(df: pl.DataFrame, col_name: str, policy: NullPolicy) -> pl.DataFrame:
+    return df.with_columns(pl.col(col_name).fill_null(pl.col(col_name).max()))
+
+@register_null_handler(NullTactic.FILL_MIN)
+def _handle_fill_min(df: pl.DataFrame, col_name: str, policy: NullPolicy) -> pl.DataFrame:
+    return df.with_columns(pl.col(col_name).fill_null(pl.col(col_name).min()))
 
 @register_null_handler(NullTactic.FILL_MOST_FREQUENT)
 def _handle_fill_most_frequent(df: pl.DataFrame, col_name: str, policy: NullPolicy) -> pl.DataFrame:
