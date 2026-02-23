@@ -21,12 +21,12 @@ def test_fill_value_type_restrictions():
     # 4. Invalid Date (must be string format)
     with pytest.raises(DetlException) as exc:
         Config({"columns": {"test": {"dtype": "date", "on_null": {"tactic": "fill_value", "value": 20240101}}}})
-    assert "must be a string matching the defined format" in str(exc.value)
+    assert "must be a string matching the defined input or output format" in str(exc.value)
     
     # 5. Invalid in Defaults
     with pytest.raises(DetlException) as exc:
         Config({"conf": {"defaults": {"date": {"on_null": {"tactic": "fill_value", "value": True}}}}})
-    assert "must be a string matching the defined format" in str(exc.value)
+    assert "must be a string matching the defined input or output format" in str(exc.value)
     
     # 6. Valid Paths
     Config({"columns": {"test": {"dtype": "date", "on_null": {"tactic": "fill_value", "value": "2024-01-01"}}}})

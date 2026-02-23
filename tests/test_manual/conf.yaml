@@ -8,8 +8,12 @@ conf:
 
 columns:
   Flight_Date:
+    
     dtype: date
-    date_format:
+    format:
       input: "%Y-%m-%d"
       output: "%d.%m.%Y"
-      
+    
+    on_null:
+      tactic: "fil_value"
+      value: 1234

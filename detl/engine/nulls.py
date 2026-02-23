@@ -1,6 +1,6 @@
 import polars as pl
 from typing import Callable, Dict
-
+from datetime import datetime
 from detl.schema import ColumnDef
 from detl.constants import NullTactic, DType
 from detl.exceptions import NullViolationError
@@ -38,7 +38,29 @@ def _handle_fill_value(df: pl.DataFrame, col_name: str, col_def: ColumnDef) -> p
         tgt_type = pl.Date if col_def.dtype == DType.DATE else pl.Datetime
         
         if col_def.date_format:
-            fill_expr = pl.lit(col_def.on_null.value).str.strptime(tgt_type, format=col_def.date_format.in_format, strict=True)
+            val = str(col_def.on_null.value)
+            
+            # We first evaluate strictly natively using datetime to find if the literal matches ANY designated format
+            # This fails incredibly fast before Polars execution and allows dynamic fallback to out_format mapping
+            
+            formats_to_try = [col_def.date_format.in_format]
+            if hasattr(col_def.date_format, "out_format") and col_def.date_format.out_format:
+                formats_to_try.append(col_def.date_format.out_format)
+                
+            parsed_dt = None
+            for fmt in formats_to_try:
+                try:
+                    parsed_dt = datetime.strptime(val, fmt)
+                    if tgt_type == pl.Date:
+                        parsed_dt = parsed_dt.date()
+                    break
+                except ValueError:
+                    pass
+            
+            if parsed_dt is None:
+                raise NullViolationError(f"Fallback value '{val}' for column '{col_name}' could not be parsed using input format '{formats_to_try[0]}' or output format '{formats_to_try[1] if len(formats_to_try)>1 else ''}'.")
+                
+            fill_expr = pl.lit(parsed_dt)
         else:
             fill_expr = pl.lit(col_def.on_null.value).cast(tgt_type, strict=True)
              

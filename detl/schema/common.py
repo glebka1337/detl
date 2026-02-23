@@ -67,4 +67,4 @@ def validate_type_logic(dtype: DType, constraints: Optional[Any], on_null: Optio
                 if dtype == "boolean" and not isinstance(val, bool):
                     raise ValueError(f"fill_value for dtype 'boolean' {context}must be a boolean. Got: {type(val).__name__}")
                 if dtype in ["date", "datetime"] and not isinstance(val, str):
-                    raise ValueError(f"fill_value for temporal dtype '{dtype}' {context}must be a string matching the defined format. Got: {type(val).__name__}")
+                    raise ValueError(f"fill_value for temporal dtype '{dtype}' {context}must be a string matching the defined input or output format. Got: {type(val).__name__}")

@@ -21,7 +21,12 @@ class Config:
             else:
                 raise ConfigError(f"Config must be initialized with a filepath (str/Path) or a dictionary. Got: {type(spec)}")
         except ValidationError as e:
-            raise ConfigError(f"Invalid Data Contract YAML:\n{e}")
+            messages = []
+            for err in e.errors():
+                loc = ".".join([str(x) for x in err['loc']])
+                messages.append(f"  - [{loc}]: {err['msg']}")
+            err_msg = "\n".join(messages)
+            raise ConfigError(f"Invalid Data Contract YAML:\n{err_msg}")
 
     @property
     def manifest(self) -> Manifesto:
