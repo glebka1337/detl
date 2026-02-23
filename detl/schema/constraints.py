@@ -9,7 +9,7 @@ class UniqueConstraint(BaseModel):
     tactic: DupTactic
 
 class MinPolicy(BaseModel):
-    threshold: Union[int, float, str] # Also string representation of dates
+    threshold: Union[int, float, str]
     violate_action: NumericViolateAction
 
     @model_validator(mode='after')
@@ -19,7 +19,7 @@ class MinPolicy(BaseModel):
         return self
 
 class MaxPolicy(BaseModel):
-    threshold: Union[int, float, str] # Also string representation of dates
+    threshold: Union[int, float, str]
     violate_action: NumericViolateAction
 
     @model_validator(mode='after')

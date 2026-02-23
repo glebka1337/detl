@@ -36,6 +36,17 @@ custom_theme = Theme({
 console = Console(theme=custom_theme)
 
 def build_source(args: argparse.Namespace) -> Source:
+    """Instantiate the appropriate Source connector based on CLI arguments.
+
+    Args:
+        args (argparse.Namespace): Parsed command-line arguments.
+
+    Returns:
+        Source: A configured Source connector instance.
+
+    Raises:
+        ValueError: If an unsupported format or unknown source type is provided.
+    """
     if args.input:
         path = Path(args.input)
         ext = path.suffix.lower()
@@ -64,6 +75,17 @@ def build_source(args: argparse.Namespace) -> Source:
     raise ValueError(f"Unknown source type: {stype}")
 
 def build_sink(args: argparse.Namespace) -> Sink:
+    """Instantiate the appropriate Sink connector based on CLI arguments.
+
+    Args:
+        args (argparse.Namespace): Parsed command-line arguments.
+
+    Returns:
+        Sink: A configured Sink connector instance.
+
+    Raises:
+        ValueError: If an unsupported format or unknown sink type is provided.
+    """
     if args.output:
         path = Path(args.output)
         ext = path.suffix.lower()
@@ -91,7 +113,12 @@ def build_sink(args: argparse.Namespace) -> Sink:
     if stype == "s3": return S3Sink(args.sink_uri, endpoint_url=args.s3_endpoint_url)
     raise ValueError(f"Unknown sink type: {stype}")
 
-def main():
+def main() -> None:
+    """Main entrypoint for the detl CLI.
+
+    Parses arguments, evaluates the declarative configuration, initializes connectors,
+    and executes the pipeline.
+    """
     parser = argparse.ArgumentParser(
         description="detl (Declarative ETL) - Strict, modular CLI utility for declarative data cleaning and transformation."
     )
@@ -116,26 +143,8 @@ def main():
 
     args = parser.parse_args()
 
-    # 1. Load configuration
-    console.print(f"[*] Reading manifest [bold]{args.config.name}[/bold]...", style="info")
-    try:
-        with open(args.config, "r", encoding="utf-8") as f:
-            yaml_data = yaml.safe_load(f) or {}
-        config = Config(yaml_data)
-    except FileNotFoundError as e:
-        console.print(f"[error]Error:[/error] {e}")
-        sys.exit(1)
-    except DetlException as e:
-        console.print(f"[error]Config validation errors:[/error]\n{e}")
-        sys.exit(1)
-    except Exception as e:
-        console.print(f"[error]Unknown error while loading manifest:[/error] {e}")
-        sys.exit(1)
-
     console.print("[success]Manifest successfully validated.[/success]")
 
-    # 2. Build Extractor & Loader Interfaces
-    console.print(f"[*] Initializing Pipeline Connectors...", style="info")
     try:
         source_connector = build_source(args)
         sink_connector = build_sink(args)
@@ -143,8 +152,6 @@ def main():
         console.print(f"[error]Connector Initialization Error:[/error] {e}")
         sys.exit(1)
 
-    # 3. Execute pipeline
-    console.print("[*] Running ETL pipeline (Polars Engine)...", style="info")
     try:
         processor = Processor(config)
         processor.execute(source=source_connector, sink=sink_connector)

@@ -18,9 +18,14 @@ class Processor:
         self.df: pl.DataFrame | pl.LazyFrame | None = None
 
     def execute(self, source: Source, sink: Sink | None = None) -> pl.DataFrame | pl.LazyFrame | None:
-        """
-        Executes the entire manifest sequence pulling data from the Source, processing it, 
-        and optionally pushing to the Sink.
+        """Executes the pipeline mapping source data to an optional sink.
+
+        Args:
+            source (Source): The configured data extraction connector.
+            sink (Sink, optional): The configured data loading connector. Defaults to None.
+
+        Returns:
+            pl.DataFrame | pl.LazyFrame | None: Transformed dataframe if sink is not provided.
         """
         df = source.read()
         
@@ -43,12 +48,15 @@ class Processor:
         return df
 
     def _infer_schema(self, df: pl.DataFrame | pl.LazyFrame) -> None:
-        """Dynamically infer schemas for 'keep' behavior without explicit YAML column mappings."""
+        """Dynamically infer schemas to define column types that have missing explicit YAML mapping.
+
+        Args:
+            df (pl.DataFrame | pl.LazyFrame): The incoming parsed datastructure.
+        """
         if self.manifest.conf.undefined_columns == "keep" and self.manifest.conf.defaults:
             schema = df.collect_schema() if isinstance(df, pl.LazyFrame) else df.schema
             for col_name, ptype in schema.items():
                 if col_name not in self.manifest.columns:
-                    # Resolve Polars Type to DType
                     dtype = None
                     if ptype in [pl.Int8, pl.Int16, pl.Int32, pl.Int64, pl.UInt8, pl.UInt16, pl.UInt32, pl.UInt64]:
                         dtype = DType.INT
@@ -76,7 +84,14 @@ class Processor:
                         self.manifest.columns[col_name] = col_def
 
     def _validate_schema_vs_data(self, df: pl.DataFrame | pl.LazyFrame) -> None:
-        """Fail-fast checking to prevent late evaluations from crashing inexplicably."""
+        """Enforces schema column mapping strictness against the source frame to prevent lazy-evaluation panics.
+
+        Args:
+            df (pl.DataFrame | pl.LazyFrame): The evaluated datastructure.
+        
+        Raises:
+            ConfigError: If a mapped column natively does not exist in the source schema.
+        """
         real_cols = df.collect_schema().names() if isinstance(df, pl.LazyFrame) else df.columns
 
         # Check duplicate configurations
@@ -132,7 +147,6 @@ class Processor:
             return df.unique(subset=subset, maintain_order=False)
 
         if tactic == "fail":
-            # Evaluates the duplicate check eagerly
             dup_check_df = df.group_by(subset).agg(pl.len().alias("count")).filter(pl.col("count") > 1)
             
             if isinstance(dup_check_df, pl.LazyFrame):

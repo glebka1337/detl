@@ -53,8 +53,7 @@ def validate_type_logic(dtype: DType, constraints: Optional[Any], on_null: Optio
         tactic = getattr(on_null, 'tactic', None)
         if tactic in compute_tactics:
             if dtype not in ["int", "float"]:
-                # Note: polars allows min/max on dates, but we restrict statistical imputation to numeric types
                 if dtype in ["date", "datetime"] and tactic in ["fill_max", "fill_min"]:
-                    pass # Allowed
+                    pass
                 else:
                     raise ValueError(f"Tactic '{tactic}' {context}cannot be used on dtype '{dtype}'. Must be numeric.")
