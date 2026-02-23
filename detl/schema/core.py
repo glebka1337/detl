@@ -1,5 +1,5 @@
 from typing import Optional, Dict, List, Any, Literal
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, model_validator, BeforeValidator
 
 from detl.constants import DType, DupTactic
 from detl.schema.common import DateFormatConfig, validate_type_logic
@@ -26,9 +26,16 @@ class DuplicateRowsConfig(BaseModel):
     tactic: DupTactic = "keep"
     subset: Optional[List[str]] = None
 
+def coerce_dup_config(v: Any) -> Any:
+    if isinstance(v, str):
+        return {"tactic": v}
+    return v
+
+from typing import Annotated
+
 class ConfDef(BaseModel):
     undefined_columns: Literal["drop", "keep"] = "drop"
-    on_duplicate_rows: DuplicateRowsConfig = Field(default_factory=DuplicateRowsConfig)
+    on_duplicate_rows: Annotated[DuplicateRowsConfig, BeforeValidator(coerce_dup_config)] = Field(default_factory=DuplicateRowsConfig)
     defaults: Optional[Dict[DType, DefaultPolicies]] = None
 
     @model_validator(mode='after')
