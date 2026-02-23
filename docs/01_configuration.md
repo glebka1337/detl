@@ -41,3 +41,24 @@ conf:
   on_duplicate_rows:
     tactic: "fail" # DON'T DO THIS on raw data sources! A single accidental duplicate will crash the engine on a 50GB file. Let the engine silently clean it using 'drop_extras'.
 ```
+
+### `defaults`
+Provides the ability to map global type-level fallback policies. This is extremely powerful when combined with `undefined_columns: "keep"`, allowing dynamically inferred columns to inherit rules automatically.
+
+- Maps rules by dataset `dtype` (`string`, `int`, `float`, `date`, `datetime`, `boolean`).
+- You can declare default `on_null` tactics and generic `constraints`.
+
+**DO (Global Fallbacks):**
+```yaml
+conf:
+  undefined_columns: "keep"
+  defaults:
+    string:
+      on_null:
+        tactic: "fill_value"
+        value: "UNKNOWN"
+    int:
+      on_null:
+        tactic: "fill_median"
+```
+*In the example above, any string column lacking an explicit definition will automatically fall back to "UNKNOWN" when Null, and inferred integers gracefully median-fill.*
