@@ -1,8 +1,10 @@
 import polars as pl
 import yaml
+import yaml
 import pytest
-from detl.schema import Manifesto
-from detl.engine import DetlEngine
+from detl.config import Config
+from detl.core import Processor
+from detl.connectors.memory import MemorySource
 
 def test_detl_engine_e2e():
     yaml_content = """
@@ -48,8 +50,8 @@ def test_detl_engine_e2e():
     """
     
     # 1. Load schema
-    manifest = Manifesto(**yaml.safe_load(yaml_content))
-    engine = DetlEngine(manifest)
+    config = Config(yaml.safe_load(yaml_content))
+    engine = Processor(config)
     
     # 2. Raw Data
     df = pl.DataFrame({
@@ -59,9 +61,10 @@ def test_detl_engine_e2e():
         "score": [100, 200, None, 400, 100], # Mean will be 200
         "garbage": ["x", "y", "z", "w", "x"] # Undefined column
     })
+    source = MemorySource(df)
     
     # 3. Execute!
-    processed_df = engine.execute(df)
+    processed_df = engine.execute(source)
     if isinstance(processed_df, pl.LazyFrame):
         processed_df = processed_df.collect()
     

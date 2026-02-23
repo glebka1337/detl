@@ -49,3 +49,6 @@ dmypy.json
 # Ignore outputs
 *.parquet
 \*clean*.csv
+
+# Manual Testing Environment
+tests/manual/

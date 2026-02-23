@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Declarative ETL tool for blazing-fast, strictly typed Data Contracts powered by Polars and Pydantic."
 readme = "README.md"
 authors = [
-    { name = "Gleb", email = "gleb@example.com" }
+    { name = "Gleb", email = "[EMAIL_ADDRESS]" }
 ]
 requires-python = ">=3.10"
 urls = { Repository = "https://github.com/gleb/detl" }
@@ -16,6 +16,15 @@ dependencies = [
     "rich>=14.3.3",
     "typer>=0.24.0",
     "rich>=13.0.0",
+    "connectorx>=0.4.5",
+    "adbc-driver-postgresql>=1.10.0",
+    "adbc-driver-sqlite>=1.10.0",
+    "psycopg2-binary>=2.9.11",
+    "pyarrow>=23.0.1",
+    "boto3>=1.42.54",
+    "pymysql>=1.1.2",
+    "sqlalchemy>=2.0.46",
+    "pandas>=2.3.3",
 ]
 
 [project.scripts]
@@ -24,4 +33,5 @@ detl = "detl.cli:main"
 [dependency-groups]
 dev = [
     "pytest>=9.0.2",
+    "testcontainers>=4.14.1",
 ]

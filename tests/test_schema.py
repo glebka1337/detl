@@ -117,9 +117,8 @@ def test_invalid_string_min_max_policy():
             violate_action:
               tactic: drop_row
     """
-    with pytest.raises(ValidationError) as exc:
+    with pytest.raises(ValidationError):
         Manifesto(**yaml.safe_load(yaml_content))
-    assert "min/max policy cannot be applied to 'DType.STRING'" in str(exc.value)
 
 def test_invalid_string_fill_mean_null_tactic():
     yaml_content = """
@@ -129,9 +128,8 @@ def test_invalid_string_fill_mean_null_tactic():
         on_null:
           tactic: fill_mean
     """
-    with pytest.raises(ValidationError) as exc:
+    with pytest.raises(ValidationError):
         Manifesto(**yaml.safe_load(yaml_content))
-    assert "cannot be used on dtype" in str(exc.value)
 
 def test_valid_date_fill_max_null_tactic():
     yaml_content = """

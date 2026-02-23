@@ -1,108 +1,89 @@
-# detl (Declarative ETL)
+<div align="center">
+  <img src="https://raw.githubusercontent.com/pola-rs/polars-static/master/logos/polars-logo-dark.svg" height="80" alt="Powered By Polars" />
+  <h1>detl (Declarative ETL)</h1>
+  <p><strong>A rigorous, declarative CLI tool and Python API explicitly designed to perform rapid data validation, transformation, and cleansing using strictly typed YAML Data Contracts.</strong></p>
+  
+  [![Python](https://img.shields.io/badge/Python-3.10+-blue?style=for-the-badge&logo=python)](https://python.org)
+  [![Polars](https://img.shields.io/badge/Powered_By-Polars-orange?style=for-the-badge)](https://pola.rs)
+  [![Pydantic](https://img.shields.io/badge/Validation-Pydantic-e92063?style=for-the-badge)](https://docs.pydantic.dev)
+  [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+</div>
 
-`detl` is a rigorous, declarative CLI tool designed to perform rapid data validation, transformation, and cleansing using Data Contracts written in YAML.
+---
 
-Powered by **Polars** (for blazing-fast, C++ backed LazyFrame evaluations) and **Pydantic** (for strict, type-safe API schema definitions), `detl` is highly modular, extensible, and professional.
+Powered natively by **Polars** (for blazing-fast, C++ backed `LazyFrame` memory mapping) and **Pydantic** (for strict, Pythonic data validations), `detl` allows Data Engineers to stop writing 1000-line monolithic scripts that ingest data and instead rely on decoupled configuration streams and `Source`/`Sink` protocols.
 
-## Features
+##  Key Features
 
-- **Data Contracts as Code**: Guarantee data quality using human-readable YAML configurations without writing complex Python scripts.
-- **Lazy Evaluation**: Utilizes `pl.LazyFrame` beneath the hood. The engine constructs a highly optimized query execution graph and only pulls data into memory strictly when necessary, allowing you to seamlessly process gigabytes of data.
-- **Strict Operations**: Clean and professional error handling without Python tracebacks. Aborts elegantly and tells exactly where your data violates the contract.
-- **Modular Decorators**: The engine architecture leverages strict dispatch registries (e.g. `@register_pipeline_stage`, `@register_constraint`). Extending capabilities is natively simple as writing a `Callable` payload.
-- **Transformative Pipeline Ops**: Capable of dynamically filtering, mutating via SQL, renaming, and sorting.
+*    **Data Contracts as Code**: Configure pipelines gracefully over YAML. Validate nulls, schemas, strings, regex, ranges, formats, and duplicates safely.
+*    **Pluggable Connector Ecosystem**: Read and write straight from `S3 (MinIO/AWS)`, `Postgres`, `MySQL`, `SQLite`, `Parquet`, `Excel`, and `CSV` files natively.
+*    **Zero-Copy Memory**: Direct SQL mappings into Polars engines utilizing state-of-the-art native `adbc` and `connectorx` rust accelerators.
+*    **Modular Python API**: Fully accessible in Airflow, Prefect, or any standard application logic.
+*    **Strict Domain Exceptions**: Predictable exception tracebacks mapping to exactly what constraint violated the dataset (`NullViolationError`, `DuplicateRowError`).
 
-## Installation
+##  Installation
 
-`detl` uses `uv` for modern, blazing-fast package management. Ensure Python 3.10+ is installed.
+Ensure your environment complies with Python 3.10+ and utilizes modern packaging:
 
 ```bash
-# Install detl globally using uv
+# Core installation
 uv pip install -e .
+
+# Extend with zero-copy database & cloud adapters (Recommended)
+uv pip install connectorx adbc-driver-postgresql adbc-driver-sqlite pymysql sqlalchemy pandas boto3
 ```
 
-You will then have access to the global CLI entrypoint alias: `detl`.
+## ️ Global CLI Usage
 
-## Quick Start
+You don't even need to write Python files to process Gigabytes of Data securely. Just deploy a YAML contract and pipe your DB bounds:
 
-Create a Data Contract (Manifesto), like `contract.yml`:
-
-```yaml
-conf:
-  undefined_columns: "drop"
-  on_duplicate_rows:
-    tactic: "drop_extras"
-
-columns:
-  age:
-    dtype: int
-    on_null:
-      tactic: "fill_median"
-    constraints:
-      min_policy:
-        threshold: 18
-        violate_action:
-          tactic: "fill_value"
-          value: 18
-
-pipeline:
-  - filter: "age >= 18"
-  - mutate:
-      is_adult: "True"
-  - sort:
-      by: "age"
-      order: "desc"
-```
-
-Then run the pipeline passing your raw input and output targets:
-
+### Database Ingestion to Parquet Cloud Archiving
 ```bash
-detl --config contract.yml --input raw.csv --output clean_data.parquet
+detl --config contract.yml \
+     --source-type postgres \
+     --source-uri "postgresql://admin:password@localhost:5432/analytics" \
+     --source-query "SELECT * FROM raw_telemetry WHERE active = true" \
+     --source-batch-size 100000 \
+     --sink-type s3 \
+     --sink-uri "s3://telemetry-lake/clean_output.parquet"
 ```
 
-The CLI handles smart I/O streaming automatically, figuring out `.csv` vs `.parquet` via file extensions and evaluating the pipeline gracefully.
+##  Python Library Orchestration
 
-## Python Library API
-
-Besides the CLI, `detl` is built as a highly extensible Python library. Data Engineers can import it to clean their existing `pl.DataFrame` or `pl.LazyFrame` instantly.
+Integrating `detl` directly into your existing backends is remarkably easy using the decoupled API mappings.
 
 ```python
-import polars as pl
-from detl import DetlEngine, Manifesto
+from detl import Processor, Config
+from detl.connectors import PostgresSource, S3Sink
 
-# 1. Parse your declarative YAML
-manifest = Manifesto.parse_file("contract.yml")
+# 1. Digest the Pipeline Contract
+config = Config("contract.yml")
 
-# 2. Spin up the Detl Engine
-engine = DetlEngine(manifest)
+# 2. Wire the Input and Output boundaries (Files, DBs, and S3 are all supported universally)
+source = PostgresSource(
+    connection_uri="postgresql://user:pass@localhost:5432/db", 
+    query="SELECT * FROM raw_events"
+)
+sink = S3Sink(
+    s3_uri="s3://data-lake/clean_events.parquet",
+    format="parquet"
+)
 
-# 3. Clean Polars Dataframes lazily!
-df = pl.scan_csv("raw.csv")
-clean_df = engine.execute(df)
-
-# Write to disk or memory
-clean_df.sink_parquet("clean_data.parquet")
+# 3. Spin up the Processor and execute the mapping!
+proc = Processor(config)
+proc.execute(source, sink)
 ```
 
-## Syntax Reference Guides
+##  Comprehensive Documentation
 
-To master building complex manifests and handling type safety seamlessly, refer to the documentation suite in `docs/`:
+To master Data Contract structures and the Connector API, inspect our documentation ecosystem:
 
 1. [01_configuration.md](docs/01_configuration.md) - Global parsing & deduplication options.
 2. [02_columns_and_types.md](docs/02_columns_and_types.md) - Casting logic and date formatting.
-3. [03_null_tactics.md](docs/03_null_tactics.md) - Comprehensive handling of anomalies (statistically and statically).
+3. [03_null_tactics.md](docs/03_null_tactics.md) - Handling anomalies (Drop, Fill Median, Fill Means, Static Value).
 4. [04_constraints.md](docs/04_constraints.md) - Validation bounds, regex matches, and mathematical assertions.
-5. [05_pipeline.md](docs/05_pipeline.md) - Utilizing final SQL execution boundaries.
-6. [03_kitchen_sink.yml](examples/03_kitchen_sink.yml) - A heavily annotated 100-line example combining all features.
+5. [05_pipeline.md](docs/05_pipeline.md) - Native SQL Filter / Mutating executions.
+6. [06_connectors.md](docs/06_connectors.md) - High-level architectural reasoning around Sources and Sinks.
+7. [07_connector_api_reference.md](docs/07_connector_api_reference.md) - **Complete CLI mapping and Python Class parameters for every Connector type.**
 
-## Architecture Guidelines for Developers
-
-The inner engine relies on strictly coupled Registry routines isolating data transformations by context. Emojis and unmaintainable `if-else` dictionaries are entirely stripped from the source codebase. 
-
-- `detl/engine/types.py` - Casts schema dtypes (string, booleans, dates, dates matching custom parsing strategies)
-- `detl/engine/nulls.py` - Manages `NullTactic` executions (fill median, value, bfill, fail, etc.)
-- `detl/engine/constraints.py` - Translates custom logic (Regex, subsets, Unique evaluations) into boolean threshold checks. 
-- `detl/engine/actions.py` - Dictates strict behaviors of violation policies (drop rows, rewrite masks).
-- `detl/engine/pipeline.py` - Exposes SQL mutating handlers spanning dataset operations (mutate, filter, sort, rename). 
-
-Everything aggregates flawlessly into the `DetlEngine.execute()` which natively intercepts and forwards Polars evaluations safely.
+Check `examples/03_kitchen_sink.yml` for a highly documented example of everything all at once.

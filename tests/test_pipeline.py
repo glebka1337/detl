@@ -1,8 +1,9 @@
 import polars as pl
 import pytest
 import yaml
-from detl.schema import Manifesto
-from detl.engine import DetlEngine
+from detl.config import Config
+from detl.core import Processor
+from detl.connectors.memory import MemorySource
 
 def test_detl_pipeline_advanced():
     yaml_content = """
@@ -32,8 +33,8 @@ def test_detl_pipeline_advanced():
     """
 
     # 1. Load schema
-    manifest = Manifesto(**yaml.safe_load(yaml_content))
-    engine = DetlEngine(manifest)
+    config = Config(yaml.safe_load(yaml_content))
+    engine = Processor(config)
 
     # 2. Raw Data
     df = pl.LazyFrame({
@@ -42,9 +43,10 @@ def test_detl_pipeline_advanced():
         "pull_ups": [10, 15, 5, 20],
         "push_ups": [20, 30, 20, 40]
     })
+    source = MemorySource(df)
 
     # 3. Execute!
-    processed_df = engine.execute(df)
+    processed_df = engine.execute(source)
     result = processed_df.collect()
 
     # 4. Assertions
