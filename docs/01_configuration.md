@@ -7,13 +7,13 @@ Determines what the engine does to columns found in the input DataFrame that are
 - **`drop`** (Recommended): Safely ignores extra columns.
 - **`keep`**: Allows unmapped columns to pass through untouched.
 
-**✅ DO (Strict Contract):**
+**DO (Strict Contract):**
 ```yaml
 conf:
   undefined_columns: "drop" # Protects downstream tables from unexpected schema bloat!
 ```
 
-**❌ DON'T (Loose Contract):**
+**DON'T (Loose Contract):**
 ```yaml
 conf:
   undefined_columns: "keep" # Bad idea. If the source file accidentally contains 20 extra garbage columns, they will flow right into your database.
@@ -27,7 +27,7 @@ Determines how exact or subset-match duplicate rows are handled. Contains `tacti
   - `fail`: Halts execution immediately if duplicates are identified.
 - **`subset`**: `["col_name1", "col_name2"]` — If provided, duplication is determined strictly based on this combination. If omitted, duplication is evaluated across all columns.
 
-**✅ DO (Smart Deduplication):**
+**DO (Smart Deduplication):**
 ```yaml
 conf:
   on_duplicate_rows:
@@ -35,7 +35,7 @@ conf:
     subset: ["user_id", "email"] # Only drops rows if BOTH user_id and email are identical.
 ```
 
-**❌ DON'T (Over-strict execution):**
+**DON'T (Over-strict execution):**
 ```yaml
 conf:
   on_duplicate_rows:

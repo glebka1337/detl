@@ -16,7 +16,7 @@ Available `tactic` options:
 
 ---
 
-**✅ DO (Intelligent Median Imputation):**
+**DO (Intelligent Median Imputation):**
 ```yaml
 columns:
   salary:
@@ -25,7 +25,7 @@ columns:
       tactic: "fill_median" # Safely estimates a salary for missing users without skewing the dataset with extremes.
 ```
 
-**✅ DO (Fallbacks for Strings):**
+**DO (Fallbacks for Strings):**
 ```yaml
 columns:
   country:
@@ -35,7 +35,7 @@ columns:
       value: "Unknown" # Defaults empty strings to strictly 'Unknown'
 ```
 
-**❌ DON'T (Logical Fallacies):**
+**DON'T (Logical Fallacies):**
 ```yaml
 columns:
   username:
@@ -44,7 +44,7 @@ columns:
       tactic: "fill_mean" # DON'T DO THIS. You cannot calculate the 'average' of a string. Pydantic will block this manifest immediately.
 ```
 
-**❌ DON'T (Missing Required Params):**
+**DON'T (Missing Required Params):**
 ```yaml
 columns:
   role:

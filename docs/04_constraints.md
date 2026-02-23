@@ -15,7 +15,7 @@ Available `violate_action.tactic`:
 ### Numerical Boundaries: `min_policy` and `max_policy`
 Requires a `threshold: <float|int>`. Strict Pydantic validators will abort if this is mapped to a `string` column.
 
-**✅ DO (Fallback Violators intelligently):**
+**DO (Fallback Violators intelligently):**
 ```yaml
 columns:
   age:
@@ -28,7 +28,7 @@ columns:
           value: 18 # Anyone under 18 is artificially capped to 18 minimum.
 ```
 
-**❌ DON'T (String Fallacies):**
+**DON'T (String Fallacies):**
 ```yaml
 columns:
   name:
@@ -43,7 +43,7 @@ columns:
 ### String Limits: `min_length` and `max_length`
 Requires a `length: <int>`. Drop titles that are too short or truncate/drop bloated texts.
 
-**✅ DO:**
+**DO:**
 ```yaml
 columns:
   review_text:
@@ -60,7 +60,7 @@ columns:
 ### Standardized Formats: `regex`
 Matches cell values against custom REGEX patterns. Great for strictly formatting IDs, SSNs, or Phone Numbers. Requires `pattern: <string>`.
 
-**✅ DO (Regex Strict Checks):**
+**DO (Regex Strict Checks):**
 ```yaml
 columns:
   postal_code:
@@ -79,7 +79,7 @@ Ensures all values conform strictly to a categorical Enum.
 - Config 1: `values: ["A", "B", "C"]` directly inside YAML.
 - Config 2: `source: "dictionary.csv"` checks values against a 1D CSV list.
 
-**✅ DO (Enforce Enums & Dicts safely):**
+**DO (Enforce Enums & Dicts safely):**
 ```yaml
 columns:
   role:
@@ -93,7 +93,7 @@ columns:
           value: "guest" # Catches dirty inputs ("AdmIn", "guest1") and safely maps them to a generic "guest".
 ```
 
-**❌ DON'T (Separators for Numpy arrays):**
+**DON'T (Separators for Numpy arrays):**
 ```yaml
 columns:
   status:
@@ -112,7 +112,7 @@ columns:
 Identifies columns that strictly must carry unique identities (e.g. Primary Keys).
 - Tactics: `drop_extras` (keep first row) or `fail`.
 
-**✅ DO (Drop duplicates smoothly):**
+**DO (Drop duplicates smoothly):**
 ```yaml
 columns:
   user_id:
@@ -127,7 +127,7 @@ columns:
 ### Custom SQL Evaluations: `custom_expr`
 Provides raw SQL boolean expression capacity. Best used for **cross-column logic** if isolated constraints fall short.
 
-**✅ DO (Cross-Column Boolean Enforcement):**
+**DO (Cross-Column Boolean Enforcement):**
 ```yaml
 columns:
   tax_logic:
@@ -139,7 +139,7 @@ columns:
           tactic: drop_row # Erases the record if they declare taxes while under poverty limit
 ```
 
-**❌ DON'T (SQL Overuse):**
+**DON'T (SQL Overuse):**
 ```yaml
 columns:
   score:

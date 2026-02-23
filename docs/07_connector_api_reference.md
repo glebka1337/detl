@@ -13,7 +13,7 @@ When using the `detl` CLI, mappings conform to this global structure:
 
 ---
 
-## ☁️ Cloud Connectors (S3 / MinIO)
+## ️ Cloud Connectors (S3 / MinIO)
 
 Transfers data in-memory directly utilizing strictly `boto3`. No local disk space is ever required during pipeline routing.
 

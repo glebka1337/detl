@@ -9,7 +9,7 @@ The Pipeline operates sequentially *after* all schemas, constraints, duplicate l
 ### `filter`
 Accepts a raw SQL WHERE-clause string.
 
-**✅ DO:**
+**DO:**
 ```yaml
 pipeline:
   - filter: "age >= 18 AND status = 'active'" # Filters out rows extremely fast on the LazyFrame.
@@ -20,7 +20,7 @@ pipeline:
 ### `mutate`
 Accepts a dictionary mapping `new_column: SQL AS expression`. It natively modifies or appends new columns.
 
-**✅ DO (Business Aggergations):**
+**DO (Business Aggergations):**
 ```yaml
 pipeline:
   - mutate:
@@ -28,7 +28,7 @@ pipeline:
       is_vip: "total_revenue > 10000"
 ```
 
-**❌ DON'T (Data Cleaning):**
+**DON'T (Data Cleaning):**
 ```yaml
 pipeline:
   - mutate:
@@ -42,7 +42,7 @@ pipeline:
 ### `rename`
 Accepts a dictionary mapping `old_name: new_name`.
 
-**✅ DO:**
+**DO:**
 ```yaml
 pipeline:
   - rename:
@@ -54,7 +54,7 @@ pipeline:
 ### `sort`
 Performs `LazyFrame.sort()`. Requires a `by: "column"` parameter, and an optional `order: "asc" | "desc"` parameter (defaults to `asc`).
 
-**✅ DO:**
+**DO:**
 ```yaml
 pipeline:
   - sort:
