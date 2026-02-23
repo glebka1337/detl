@@ -1,5 +1,4 @@
 import polars as pl
-import pytest
 import yaml
 from detl.config import Config
 from detl.core import Processor

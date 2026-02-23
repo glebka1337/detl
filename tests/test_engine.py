@@ -1,7 +1,5 @@
 import polars as pl
 import yaml
-import yaml
-import pytest
 from detl.config import Config
 from detl.core import Processor
 from detl.connectors.memory import MemorySource

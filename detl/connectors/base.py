@@ -1,6 +1,5 @@
 import abc
 import polars as pl
-from typing import Any
 
 class Source(abc.ABC):
     """

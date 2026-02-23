@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Declarative ETL tool for blazing-fast, strictly typed Data Contracts powered by Polars and Pydantic."
 readme = "README.md"
 authors = [
-    { name = "Gleb", email = "[EMAIL_ADDRESS]" }
+    { name = "Gleb", email = "gleb@example.com" }
 ]
 requires-python = ">=3.10"
 urls = { Repository = "https://github.com/gleb/detl" }
@@ -33,5 +33,6 @@ detl = "detl.cli:main"
 [dependency-groups]
 dev = [
     "pytest>=9.0.2",
+    "ruff>=0.15.2",
     "testcontainers>=4.14.1",
 ]

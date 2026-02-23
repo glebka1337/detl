@@ -44,9 +44,12 @@ def build_source(args: argparse.Namespace) -> Source:
     if args.input:
         path = Path(args.input)
         ext = path.suffix.lower()
-        if ext == ".csv": return CsvSource(path)
-        if ext == ".parquet": return ParquetSource(path)
-        if ext in (".xls", ".xlsx"): return ExcelSource(path)
+        if ext == ".csv":
+            return CsvSource(path)
+        if ext == ".parquet":
+            return ParquetSource(path)
+        if ext in (".xls", ".xlsx"):
+            return ExcelSource(path)
         raise ValueError(f"Unsupported input format: {ext}")
         
     stype = args.source_type
@@ -59,13 +62,20 @@ def build_source(args: argparse.Namespace) -> Source:
     except ValueError:
         raise ValueError("source-batch-size must be an integer")
         
-    if stype == "postgres": return PostgresSource(args.source_uri, args.source_query, batch_size=args.source_batch_size)
-    if stype == "mysql": return MySQLSource(args.source_uri, args.source_query, batch_size=args.source_batch_size)
-    if stype == "sqlite": return SQLiteSource(args.source_uri, args.source_query, batch_size=args.source_batch_size)
-    if stype == "csv": return CsvSource(args.source_uri)
-    if stype == "parquet": return ParquetSource(args.source_uri)
-    if stype == "excel": return ExcelSource(args.source_uri)
-    if stype == "s3": return S3Source(args.source_uri, endpoint_url=args.s3_endpoint_url)
+    if stype == "postgres":
+        return PostgresSource(args.source_uri, args.source_query, batch_size=args.source_batch_size)
+    if stype == "mysql":
+        return MySQLSource(args.source_uri, args.source_query, batch_size=args.source_batch_size)
+    if stype == "sqlite":
+        return SQLiteSource(args.source_uri, args.source_query, batch_size=args.source_batch_size)
+    if stype == "csv":
+        return CsvSource(args.source_uri)
+    if stype == "parquet":
+        return ParquetSource(args.source_uri)
+    if stype == "excel":
+        return ExcelSource(args.source_uri)
+    if stype == "s3":
+        return S3Source(args.source_uri, endpoint_url=args.s3_endpoint_url)
     raise ValueError(f"Unknown source type: {stype}")
 
 def build_sink(args: argparse.Namespace) -> Sink:
@@ -83,9 +93,12 @@ def build_sink(args: argparse.Namespace) -> Sink:
     if args.output:
         path = Path(args.output)
         ext = path.suffix.lower()
-        if ext == ".csv": return CsvSink(path)
-        if ext == ".parquet": return ParquetSink(path)
-        if ext in (".xls", ".xlsx"): return ExcelSink(path)
+        if ext == ".csv":
+            return CsvSink(path)
+        if ext == ".parquet":
+            return ParquetSink(path)
+        if ext in (".xls", ".xlsx"):
+            return ExcelSink(path)
         raise ValueError(f"Unsupported output format: {ext}")
         
     stype = args.sink_type
@@ -102,13 +115,20 @@ def build_sink(args: argparse.Namespace) -> Sink:
     if args.sink_if_exists:
         db_kwargs["if_table_exists"] = args.sink_if_exists
         
-    if stype == "postgres": return PostgresSink(args.sink_uri, args.sink_table, **db_kwargs)
-    if stype == "mysql": return MySQLSink(args.sink_uri, args.sink_table, **db_kwargs)
-    if stype == "sqlite": return SQLiteSink(args.sink_uri, args.sink_table, **db_kwargs)
-    if stype == "csv": return CsvSink(args.sink_uri)
-    if stype == "parquet": return ParquetSink(args.sink_uri)
-    if stype == "excel": return ExcelSink(args.sink_uri)
-    if stype == "s3": return S3Sink(args.sink_uri, endpoint_url=args.s3_endpoint_url)
+    if stype == "postgres":
+        return PostgresSink(args.sink_uri, args.sink_table, **db_kwargs)
+    if stype == "mysql":
+        return MySQLSink(args.sink_uri, args.sink_table, **db_kwargs)
+    if stype == "sqlite":
+        return SQLiteSink(args.sink_uri, args.sink_table, **db_kwargs)
+    if stype == "csv":
+        return CsvSink(args.sink_uri)
+    if stype == "parquet":
+        return ParquetSink(args.sink_uri)
+    if stype == "excel":
+        return ExcelSink(args.sink_uri)
+    if stype == "s3":
+        return S3Sink(args.sink_uri, endpoint_url=args.s3_endpoint_url)
     raise ValueError(f"Unknown sink type: {stype}")
 
 def main() -> None:
@@ -184,7 +204,7 @@ def main() -> None:
         console.print(f"[error]Critical pipeline error:[/error]\n{e}")
         sys.exit(1)
 
-    console.print(f"[success]Done! Results successfully saved to output connector.[/success]")
+    console.print("[success]Done! Results successfully saved to output connector.[/success]")
 
 if __name__ == "__main__":
     main()

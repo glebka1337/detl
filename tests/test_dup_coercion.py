@@ -1,5 +1,4 @@
 from detl.config import Config
-from detl.schema.core import Manifesto
 
 def test_coerce_dup_rows_string():
     yaml_dict = {

@@ -1,4 +1,4 @@
-from typing import Optional, Dict, List, Any, Literal
+from typing import Optional, Dict, List, Any, Literal, Annotated
 from pydantic import BaseModel, Field, model_validator, BeforeValidator
 
 from detl.constants import DType, DupTactic
@@ -17,7 +17,7 @@ class ColumnDef(BaseModel):
     @model_validator(mode='after')
     def check_column_logic(self) -> 'ColumnDef':
         if self.date_format is not None and self.dtype not in [DType.DATE, DType.DATETIME]:
-            raise ValueError(f"Format configuration (format) can only be applied to 'date' or 'datetime' columns.")
+            raise ValueError("Format configuration (format) can only be applied to 'date' or 'datetime' columns.")
         validate_type_logic(self.dtype, self.constraints, self.on_null, context="")
         return self
 
@@ -34,7 +34,7 @@ def coerce_dup_config(v: Any) -> Any:
         return {"tactic": v}
     return v
 
-from typing import Annotated
+
 
 class ConfDef(BaseModel):
     undefined_columns: Literal["drop", "keep"] = "drop"

@@ -12,5 +12,5 @@ class NullPolicy(BaseModel):
         if self.tactic == "fill_value" and self.value is None:
             raise ValueError("Tactic 'fill_value' requires a 'value' parameter.")
         if self.tactic != "fill_value" and self.value is not None:
-            raise ValueError(f"Parameter 'value' allowed only for 'fill_value'.")
+            raise ValueError("Parameter 'value' allowed only for 'fill_value'.")
         return self

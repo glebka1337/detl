@@ -1,6 +1,5 @@
 import pytest
 import psycopg2
-import polars as pl
 from testcontainers.postgres import PostgresContainer
 
 from detl.connectors import PostgresSource, PostgresSink

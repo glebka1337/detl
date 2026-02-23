@@ -1,9 +1,7 @@
 import pytest
-import yaml
 import tempfile
 from pathlib import Path
 import polars as pl
-from pydantic import ValidationError
 
 from detl.config import Config
 from detl.core import Processor
@@ -16,7 +14,7 @@ def test_empty_yaml():
         f_path = f.name
     
     with pytest.raises(ConfigError, match="is empty or invalid"):
-        config = Config(f_path)
+        Config(f_path)
     Path(f_path).unlink()
 
 def test_negative_length_constraint():

@@ -4,7 +4,6 @@ from detl.config import Config
 from detl.core import Processor
 from detl.exceptions import ConfigError
 from detl.connectors.memory import MemorySource
-from pydantic import ValidationError
 
 def test_zero_config_inference():
     # Only supply global defaults, no columns!
