@@ -13,41 +13,6 @@
 
 Powered natively by **Polars** (for blazing-fast, C++ backed `LazyFrame` memory mapping) and **Pydantic** (for strict, Pythonic data validations), `detl` allows Data Engineers to stop writing 1000-line monolithic scripts that ingest data and instead rely on decoupled configuration streams and `Source`/`Sink` protocols.
 
-*   **Memory Safe.** Cap streams iteratively inside Polars to process TBs of records via `batch_size`.
-*   **Zero-Copy Routing (Matrix Routing).** Extract from databases (Postgres, MySQL, S3) natively pushing validated binaries to target datalakes *without* downloading interim CSVs to local python space.
-
-## Architecture Pipeline
-
-```mermaid
-graph TD
-    classDef connect fill:#1D4ED8,stroke:#1E3A8A,stroke-width:2px,color:#fff
-    classDef eval fill:#059669,stroke:#047857,stroke-width:2px,color:#fff
-    
-    A1[(PostgreSQL)]:::connect
-    A2[Parquet / CSV]:::connect
-    A3[(MinIO / S3)]:::connect
-
-    B[detl API Connector Layer\nconnectorx / adbc]:::connect
-    
-    C((Polars LazyFrame\nZero Copy Execution)):::eval
-    D{Pydantic Core Schema\nValidators & Constraints}:::eval
-    
-    E1[(MySQL / SQLite)]:::connect
-    E2[Clean Data Lake]:::connect
-
-    A1 -->|Read| B
-    A2 -->|Read| B
-    A3 -->|Read| B
-    
-    B -->|Schema Inference| C
-    D -->|Strict Contract| C
-
-    C -->|Output Routing| E1
-    C -->|Output Routing| E2
-```
-
-## Matrix Routing (Example)
-
 ##  Key Features
 
 *    **Data Contracts as Code**: Configure pipelines gracefully over YAML. Validate nulls, schemas, strings, regex, ranges, formats, and duplicates safely.
@@ -112,13 +77,5 @@ proc.execute(source, sink)
 ##  Comprehensive Documentation
 
 To master Data Contract structures and the Connector API, inspect our documentation ecosystem:
-
-1. [01_configuration.md](docs/01_configuration.md) - Global parsing & deduplication options.
-2. [02_columns_and_types.md](docs/02_columns_and_types.md) - Casting logic and date formatting.
-3. [03_null_tactics.md](docs/03_null_tactics.md) - Handling anomalies (Drop, Fill Median, Fill Means, Static Value).
-4. [04_constraints.md](docs/04_constraints.md) - Validation bounds, regex matches, and mathematical assertions.
-5. [05_pipeline.md](docs/05_pipeline.md) - Native SQL Filter / Mutating executions.
-6. [06_connectors.md](docs/06_connectors.md) - High-level architectural reasoning around Sources and Sinks.
-7. [07_connector_api_reference.md](docs/07_connector_api_reference.md) - **Complete CLI mapping and Python Class parameters for every Connector type.**
 
 Check `examples/03_kitchen_sink.yml` for a highly documented example of everything all at once.

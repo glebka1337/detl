@@ -32,6 +32,8 @@ detl = "detl.cli:main"
 
 [dependency-groups]
 dev = [
+    "mkdocs>=1.6.1",
+    "mkdocs-material>=9.7.2",
     "pytest>=9.0.2",
     "ruff>=0.15.2",
     "testcontainers>=4.14.1",
