@@ -17,7 +17,10 @@ def register_type(type_name: str) -> Callable[[TypeCaster], TypeCaster]:
 
 @register_type(DType.STRING)
 def _cast_string(df: pl.DataFrame, col_name: str, col_def: ColumnDef) -> pl.DataFrame:
-    return df.with_columns(pl.col(col_name).cast(pl.Utf8))
+    expr = pl.col(col_name).cast(pl.Utf8)
+    if col_def.trim:
+        expr = expr.str.strip_chars()
+    return df.with_columns(expr)
 
 @register_type(DType.INT)
 def _cast_int(df: pl.DataFrame, col_name: str, col_def: ColumnDef) -> pl.DataFrame:

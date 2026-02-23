@@ -9,6 +9,7 @@ from detl.schema.constraints import ConstraintsDef
 class ColumnDef(BaseModel):
     rename: Optional[str] = None
     dtype: DType
+    trim: bool = False
     date_format: Optional[DateFormatConfig] = Field(None, alias="format")
     on_null: Optional[NullPolicy] = None
     constraints: Optional[ConstraintsDef] = None

@@ -24,6 +24,18 @@ columns:
     dtype: string # DON'T cast numbers to strings. You cannot run statistical pipelines on string prices!
 ```
 
+### String Preprocessing (`trim`)
+Real-world data often suffers from unpredictable leading or trailing whitespace (`"  user_name  "`) and rogue tab characters.
+
+By enabling the `trim: true` directive, `detl` will apply an optimized, native `.strip_chars()` operation to every string value inside the column *immediately* during cast operation. This ensures that downstream string constraints (like `max_length` or `allowed_values`) evaluate clean, uniform strings.
+
+```yaml
+columns:
+  username:
+    dtype: string
+    trim: true # Safe! "  Vandal  " becomes "Vandal" before validation!
+```
+
 ---
 
 ### Implicit Type Casting (Coercion)

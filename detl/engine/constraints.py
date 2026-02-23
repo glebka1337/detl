@@ -61,11 +61,11 @@ def _apply_allowed_values(df: pl.DataFrame, col_name: str, policy: AllowedValues
 @register_constraint("custom_expr")
 def _apply_custom_expr(df: pl.DataFrame | pl.LazyFrame, col_name: str, policy: CustomExprPolicy) -> pl.DataFrame | pl.LazyFrame:
     ctx = pl.SQLContext(frame=df)
-    res = ctx.execute(f"SELECT *, ({policy.expr}) as __violated FROM frame")
-    mask = ~pl.col("__violated")
+    res = ctx.execute(f"SELECT *, ({policy.expr}) as __is_valid FROM frame")
+    mask = ~pl.col("__is_valid")
     
     df = apply_violate_action(res, col_name, mask, policy.violate_action)
-    df = df.drop("__violated")
+    df = df.drop("__is_valid")
     return df
 
 @register_constraint("unique")
