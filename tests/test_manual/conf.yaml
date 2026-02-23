@@ -1,4 +1,7 @@
 conf:
   undefined_columns: "keep"
   on_duplicate_rows: "keep"
-
+  defaults:
+    float:
+      on_null:
+        tactic: "fill_median"
