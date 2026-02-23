@@ -1,0 +1,4 @@
+conf:
+  undefined_columns: "keep"
+  on_duplicate_rows: "keep"
+
