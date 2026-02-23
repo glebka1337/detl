@@ -1,21 +1,61 @@
 # 7. Connector API & CLI Reference
 
-`detl` uses a fully decoupled architecture routing data through the `detl.connectors` abstraction boundaries. Here is the explicit mapping of every single available argument, their Python programmatic equivalent, and how to invoke them through the CLI.
+`detl` uses a fully decoupled architecture routing data through the `detl.connectors` abstraction boundaries. What makes `detl` unique is **Matrix Routing**: you can pipe data from *any* Source to *any* Sink directly without ever saving intermediate files locally!
 
 ---
 
-## Command Line Global Arguments
+## 🚀 CLI Crash Course (Matrix Routing)
 
-When using the `detl` CLI, mappings conform to this global structure:
-*   `--config [FILE]`: **Required**. The path to your YAML declarative contract.
-*   `--source-type [TYPE]` / `--source-uri [URI]`: Identifies the `Source` extractor.
-*   `--sink-type [TYPE]` / `--sink-uri [URI]`: Identifies the `Sink` loader.
+The true power of `detl` is executed via the CLI. All operations require a path to the Contract (`-f config.yaml`).
+
+### 1. Local Files (The Defaults)
+Use `-i` and `-o` as quick shortcuts for File System connectors (CSV, Parquet, Excel).
+
+```bash
+# Convert a CSV to Parquet while applying validation schema
+uv run detl -f conf.yaml -i raw_data.csv -o clean_data.parquet
+```
+
+### 2. Database Extraction
+Use `--source-type` and `--source-uri` to execute SQL queries natively directly into the pipeline!
+
+```bash
+# Extract messy records from Postgres, clean them, and save to CSV
+uv run detl -f conf.yaml \
+  --source-type postgres \
+  --source-uri "postgresql://user:password@localhost:5432/detldb" \
+  --source-query "SELECT * FROM users" \
+  -o clean_db.csv
+```
+
+### 3. Database to Database (Or DB to S3)
+You don't need `-o`! Just specify `--sink-type` to push data across domains.
+
+```bash
+# Read from Postgres -> Validate -> Write cleanly into MySQL
+uv run detl -f conf.yaml \
+  --source-type postgres \
+  --source-uri "postgresql://user:pass@localhost:5432/db1" \
+  --source-query "SELECT * FROM public.orders" \
+  --sink-type mysql \
+  --sink-uri "mysql+pymysql://user:pass@localhost:3306/db2" \
+  --sink-table "clean_orders"
+```
 
 ---
 
-## ️ Cloud Connectors (S3 / MinIO)
+## ☁️ Cloud Connectors (S3 / MinIO)
 
 Transfers data in-memory directly utilizing strictly `boto3`. No local disk space is ever required during pipeline routing.
+
+### CLI Arguments
+*   `--source-type s3` / `--sink-type s3`
+*   `--source-uri "s3://..."` / `--sink-uri "s3://..."`
+*   `--s3-endpoint-url "http://localhost:9000"` (Optional modifier for custom domains like MinIO)
+
+```bash
+uv run detl -f conf.yaml -i local.csv --sink-type s3 --sink-uri "s3://my-bucket/datalake.parquet" --s3-endpoint-url "http://localhost:9000"
+```
 
 ### Python API
 ```python
@@ -35,16 +75,21 @@ sink = S3Sink(
 )
 ```
 
-### CLI Arguments
-*   `--source-type s3` / `--sink-type s3`
-*   `--source-uri "s3://..."` / `--sink-uri "s3://..."`
-*   `--s3-endpoint-url "http://localhost:9000"` (Optional modifier for custom domains)
-
 ---
 
-## ️ Database Connectors (Postgres / MySQL / SQLite)
+## 🗄️ Database Connectors (Postgres / MySQL / SQLite)
 
 Native database protocols mapping zero-copy direct queries via `connectorx` reading protocols and `adbc` / `sqlalchemy` optimized writing blocks.
+
+### CLI Arguments
+*   `--source-type postgres` | `mysql` | `sqlite`
+*   `--source-uri "protocol://credentials..."`
+*   `--source-query "SELECT * FROM..."`
+*   `--source-batch-size 1000` (Optional)
+*   `--sink-type postgres` | `mysql` | `sqlite`
+*   `--sink-uri "protocol://credentials..."`
+*   `--sink-table "target_table_name"`
+*   `--sink-batch-size 5000` (Optional)
 
 ### Python API
 ```python
@@ -70,19 +115,9 @@ sink = MySQLSink(
 *   MySQL Writes: `sqlalchemy`, `pymysql`, `pandas` (Pandas utilized purely as an abstraction fallback)
 *   SQLite: `adbc-driver-sqlite`
 
-### CLI Arguments
-*   `--source-type postgres` | `mysql` | `sqlite`
-*   `--source-uri "protocol://credentials..."`
-*   `--source-query "SELECT * FROM..."`
-*   `--source-batch-size 1000`
-*   `--sink-type postgres` | `mysql` | `sqlite`
-*   `--sink-uri "protocol://credentials..."`
-*   `--sink-table "target_table_name"`
-*   `--sink-batch-size 5000`
-
 ---
 
-##  File System Connectors (CSV / Parquet / Excel)
+## 📁 File System Connectors (CSV / Parquet / Excel)
 
 Polars-native highly tuned binary abstractions pointing directly at physical disk targets. Automatically evaluates formats lazily avoiding out-of-memory evaluation errors.
 
@@ -100,12 +135,3 @@ sink = ParquetSink(
     streaming=True # Enforces streaming API evaluation dynamically against LazyFrames
 )
 ```
-
-### CLI Arguments 
-*If avoiding complex declarations, you can still use `-i input.csv -o output.parquet` for implicitly typed file paths!*
-
-**Explicit Types:**
-*   `--source-type csv` | `parquet` | `excel`
-*   `--source-uri "/path/to/infile.csv"`
-*   `--sink-type csv` | `parquet` | `excel`
-*   `--sink-uri "/path/to/outfile.parquet"`
