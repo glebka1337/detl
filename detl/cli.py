@@ -2,15 +2,9 @@ import argparse
 import sys
 import yaml
 from pathlib import Path
-from typing import Optional
-
 import polars as pl
-from pydantic import ValidationError
 from rich.console import Console
-from rich.panel import Panel
 from rich.theme import Theme
-
-from detl.schema import Manifesto
 from detl.config import Config
 from detl.core import Processor
 from detl.exceptions import DetlException, ConnectionConfigurationError
@@ -142,6 +136,20 @@ def main() -> None:
     parser.add_argument("--s3-endpoint-url", type=str, required=False, help="Optional Endpoint URL for S3/MinIO connections.")
 
     args = parser.parse_args()
+
+    try:
+        with open(args.config, "r", encoding="utf-8") as f:
+            yaml_data = yaml.safe_load(f) or {}
+        config = Config(yaml_data)
+    except FileNotFoundError as e:
+        console.print(f"[error]Error:[/error] {e}")
+        sys.exit(1)
+    except DetlException as e:
+        console.print(f"[error]Config validation errors:[/error]\n{e}")
+        sys.exit(1)
+    except Exception as e:
+        console.print(f"[error]Unknown error while loading manifest:[/error] {e}")
+        sys.exit(1)
 
     console.print("[success]Manifest successfully validated.[/success]")
 
