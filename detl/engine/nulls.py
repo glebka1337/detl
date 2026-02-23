@@ -3,6 +3,7 @@ from typing import Callable, Dict
 
 from detl.schema.nulls import NullPolicy
 from detl.constants import NullTactic
+from detl.exceptions import NullViolationError
 
 NullHandler = Callable[[pl.DataFrame, str, NullPolicy], pl.DataFrame]
 
@@ -28,7 +29,7 @@ def _handle_fail(df: pl.DataFrame | pl.LazyFrame, col_name: str, policy: NullPol
         has_failed = checker.to_series().any()
         
     if has_failed:
-        raise ValueError(f"Column '{col_name}' contains null values which is forbidden by 'fail' tactic.")
+        raise NullViolationError(f"Column '{col_name}' contains null values which is forbidden by 'fail' tactic.")
     return df
 
 @register_null_handler(NullTactic.FILL_VALUE)
@@ -69,5 +70,5 @@ def handle_nulls(df: pl.DataFrame, col_name: str, policy: NullPolicy) -> pl.Data
     """
     handler = NULL_REGISTRY.get(policy.tactic)
     if not handler:
-        raise NotImplementedError(f"Null tactic '{policy.tactic}' mapping is missing.")
+        raise NullViolationError(f"Null tactic '{policy.tactic}' mapping is missing.")
     return handler(df, col_name, policy)

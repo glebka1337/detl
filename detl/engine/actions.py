@@ -2,6 +2,7 @@ import polars as pl
 from typing import Callable, Union, Dict
 from detl.schema.common import StringViolateAction, NumericViolateAction
 from detl.constants import StringActionTactic, NumericActionTactic
+from detl.exceptions import ConstraintViolationError
 
 ActionHandler = Callable[
     [pl.DataFrame, str, pl.Expr, Union[StringViolateAction, NumericViolateAction]],
@@ -32,14 +33,14 @@ def _handle_fail(df: pl.DataFrame | pl.LazyFrame, col_name: str, mask: pl.Expr, 
         has_failed = checker.to_series().any()
         
     if has_failed:
-        raise ValueError(f"Constraint failed on column '{col_name}'.")
+        raise ConstraintViolationError(f"Constraint failed on column '{col_name}'.")
     return df
 
 @register_action(StringActionTactic.FILL_VALUE)
 @register_action(NumericActionTactic.FILL_VALUE)
 def _handle_fill_value(df: pl.DataFrame, col_name: str, mask: pl.Expr, action) -> pl.DataFrame:
     if getattr(action, "value", None) is None:
-        raise ValueError(f"'fill_value' requires a 'value' parameter for '{col_name}'.")
+        raise ConstraintViolationError(f"'fill_value' requires a 'value' parameter for '{col_name}'.")
     return df.with_columns(
         pl.when(mask).then(pl.lit(action.value)).otherwise(pl.col(col_name)).alias(col_name)
     )
@@ -80,6 +81,6 @@ def apply_violate_action(
     """
     handler = ACTION_REGISTRY.get(action.tactic)
     if not handler:
-        raise NotImplementedError(f"Tactic '{action.tactic}' is not supported for action mapping.")
+        raise ConstraintViolationError(f"Tactic '{action.tactic}' is not supported for action mapping.")
     
     return handler(df, col_name, mask, action)

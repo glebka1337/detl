@@ -6,6 +6,7 @@ from detl.schema.constraints import (
     ConstraintsDef, MinPolicy, MaxPolicy, RegexPolicy, 
     StringLengthPolicy, AllowedValuesPolicy, CustomExprPolicy, UniqueConstraint
 )
+from detl.exceptions import ConstraintViolationError, DuplicateRowError
 from detl.engine.actions import apply_violate_action
 
 ConstraintHandler = Callable[[pl.DataFrame, str, Any], pl.DataFrame]
@@ -47,7 +48,7 @@ def _apply_allowed_values(df: pl.DataFrame, col_name: str, policy: AllowedValues
     elif policy.source is not None:
         path = Path(policy.source)
         if not path.exists():
-            raise FileNotFoundError(f"Allowed values source '{path}' not found for column '{col_name}'.")
+            raise ConstraintViolationError(f"Allowed values source '{path}' not found for column '{col_name}'.")
         with open(path, "r", encoding="utf-8") as f:
             content = f.read().strip()
             if path.suffix == ".csv" or policy.separator in content:
@@ -79,7 +80,7 @@ def _apply_unique(df: pl.DataFrame | pl.LazyFrame, col_name: str, policy: Unique
             has_duplicates = dup_check_df.height > 0
             
         if has_duplicates:
-            raise ValueError(f"Unique constraint failed on column '{col_name}'.")
+            raise DuplicateRowError(f"Unique constraint failed on column '{col_name}'.")
     return df
 
 def apply_constraints(df: pl.DataFrame, col_name: str, constraints: ConstraintsDef) -> pl.DataFrame:
@@ -94,5 +95,5 @@ def apply_constraints(df: pl.DataFrame, col_name: str, constraints: ConstraintsD
             if handler:
                 df = handler(df, col_name, policy)
             else:
-                raise NotImplementedError(f"Constraint handler for '{field_name}' not implemented.")
+                raise ConstraintViolationError(f"Constraint handler for '{field_name}' not implemented.")
     return df

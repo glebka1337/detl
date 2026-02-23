@@ -1,23 +1,29 @@
 import polars as pl
 from detl.constants import DType
-from detl.schema import Manifesto
+from detl.config import Config
+from detl.connectors.base import Source, Sink
 from detl.engine.types import apply_types
 from detl.engine.nulls import handle_nulls
 from detl.engine.constraints import apply_constraints
 from detl.engine.pipeline import apply_pipeline
+from detl.exceptions import DuplicateRowError, ConfigError
 
-class DetlEngine:
+class Processor:
     """
-    Main execution engine that applies a Declarative ETL Data Contract (Manifesto)
-    onto a Polars DataFrame.
+    Main execution engine that applies a Declarative ETL Data Contract (Config).
     """
-    def __init__(self, manifest: Manifesto):
-        self.manifest = manifest
+    def __init__(self, config: Config):
+        self.config = config
+        self.manifest = config.manifest
+        self.df: pl.DataFrame | pl.LazyFrame | None = None
 
-    def execute(self, df: pl.DataFrame | pl.LazyFrame) -> pl.DataFrame | pl.LazyFrame:
+    def execute(self, source: Source, sink: Sink | None = None) -> pl.DataFrame | pl.LazyFrame | None:
         """
-        Executes the entire manifest sequence on the DataFrame or LazyFrame.
+        Executes the entire manifest sequence pulling data from the Source, processing it, 
+        and optionally pushing to the Sink.
         """
+        df = source.read()
+        
         self._infer_schema(df)
         self._validate_schema_vs_data(df)
 
@@ -27,6 +33,13 @@ class DetlEngine:
         df = self._apply_constraints(df)
         df = self._handle_duplicates(df)
         df = self._run_pipeline(df)
+        
+        self.df = df
+        
+        if sink is not None:
+            sink.write(df)
+            return None
+            
         return df
 
     def _infer_schema(self, df: pl.DataFrame | pl.LazyFrame) -> None:
@@ -71,12 +84,12 @@ class DetlEngine:
         if dup_subset:
             for col in dup_subset:
                 if col not in real_cols:
-                    raise ValueError(f"Subset column '{col}' for duplicate rows check does not exist in the dataset.")
+                    raise ConfigError(f"Subset column '{col}' for duplicate rows check does not exist in the dataset.")
 
         # Check explicit column mappings and renames
         for col_name, col_def in self.manifest.columns.items():
             if col_name not in real_cols:
-                raise ValueError(f"Manifest column '{col_name}' does not exist in the dataset.")
+                raise ConfigError(f"Manifest column '{col_name}' does not exist in the dataset.")
 
     def _drop_undefined_columns(self, df: pl.DataFrame | pl.LazyFrame) -> pl.DataFrame | pl.LazyFrame:
         if self.manifest.conf.undefined_columns == "drop":
@@ -128,7 +141,7 @@ class DetlEngine:
                 has_duplicates = dup_check_df.height > 0
                 
             if has_duplicates:
-                raise ValueError("Duplicate rows detected and 'fail' tactic is active.")
+                raise DuplicateRowError("Duplicate rows detected and 'fail' tactic is active.")
 
         return df
 

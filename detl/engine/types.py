@@ -2,6 +2,7 @@ import polars as pl
 from typing import Callable, Dict
 from detl.schema import ColumnDef
 from detl.constants import DType
+from detl.exceptions import TypeCastingError
 
 TypeCaster = Callable[[pl.DataFrame, str, ColumnDef], pl.DataFrame]
 
@@ -55,5 +56,5 @@ def apply_types(df: pl.DataFrame, col_name: str, col_def: ColumnDef) -> pl.DataF
     """
     handler = TYPE_REGISTRY.get(col_def.dtype)
     if not handler:
-        raise NotImplementedError(f"Type mapping for '{col_def.dtype}' is currently unsupported.")
+        raise TypeCastingError(f"Type mapping for '{col_def.dtype}' is currently unsupported.")
     return handler(df, col_name, col_def)
