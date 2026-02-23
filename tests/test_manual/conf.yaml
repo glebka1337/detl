@@ -5,3 +5,11 @@ conf:
     float:
       on_null:
         tactic: "fill_median"
+
+columns:
+  Flight_Date:
+    dtype: date
+    date_format:
+      input: "%Y-%m-%d"
+      output: "%d.%m.%Y"
+      

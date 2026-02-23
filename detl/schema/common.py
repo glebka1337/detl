@@ -57,3 +57,14 @@ def validate_type_logic(dtype: DType, constraints: Optional[Any], on_null: Optio
                     pass
                 else:
                     raise ValueError(f"Tactic '{tactic}' {context}cannot be used on dtype '{dtype}'. Must be numeric.")
+        elif tactic == "fill_value":
+            val = getattr(on_null, 'value', None)
+            if val is not None:
+                if dtype in ["int", "float"] and not isinstance(val, (int, float)):
+                    raise ValueError(f"fill_value for numeric dtype '{dtype}' {context}must be a number. Got: {type(val).__name__}")
+                if dtype == "string" and not isinstance(val, str):
+                    raise ValueError(f"fill_value for dtype 'string' {context}must be a string. Got: {type(val).__name__}")
+                if dtype == "boolean" and not isinstance(val, bool):
+                    raise ValueError(f"fill_value for dtype 'boolean' {context}must be a boolean. Got: {type(val).__name__}")
+                if dtype in ["date", "datetime"] and not isinstance(val, str):
+                    raise ValueError(f"fill_value for temporal dtype '{dtype}' {context}must be a string matching the defined format. Got: {type(val).__name__}")

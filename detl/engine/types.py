@@ -45,7 +45,14 @@ def _parse_temporal(df: pl.DataFrame, col_name: str, col_def: ColumnDef, target_
         fmt = col_def.date_format.in_format
         error_tactic = col_def.date_format.on_parse_error.get("tactic", "drop_row")
         strict = (error_tactic == "fail")
-        parsed = pl.col(col_name).str.strptime(target_type, format=fmt, strict=strict)
+        
+        # If the dataframe column is entirely null, Polars types it as pl.Null, which crashes str.strptime
+        if df.schema[col_name] == pl.Null:
+            parsed = pl.col(col_name).cast(target_type)
+        else:
+            # Cast to Utf8 first to guarantee strptime behaves correctly even with mixed types
+            parsed = pl.col(col_name).cast(pl.Utf8).str.strptime(target_type, format=fmt, strict=strict)
+            
         return df.with_columns(parsed.alias(col_name))
     
     return df.with_columns(pl.col(col_name).cast(target_type, strict=False))

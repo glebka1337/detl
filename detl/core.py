@@ -125,7 +125,7 @@ class Processor:
         df_cols = df.collect_schema().names() if isinstance(df, pl.LazyFrame) else df.columns
         for col_name, col_def in self.manifest.columns.items():
             if col_name in df_cols and col_def.on_null:
-                df = handle_nulls(df, col_name, col_def.on_null)
+                df = handle_nulls(df, col_name, col_def)
         return df
 
     def _apply_constraints(self, df: pl.DataFrame | pl.LazyFrame) -> pl.DataFrame | pl.LazyFrame:
