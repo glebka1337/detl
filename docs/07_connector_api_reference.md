@@ -4,7 +4,7 @@
 
 ---
 
-## 🚀 CLI Crash Course (Matrix Routing)
+## CLI Crash Course (Matrix Routing)
 
 The true power of `detl` is executed via the CLI. All operations require a path to the Contract (`-f config.yaml`).
 
@@ -44,7 +44,7 @@ uv run detl -f conf.yaml \
 
 ---
 
-## ☁️ Cloud Connectors (S3 / MinIO)
+## Cloud Connectors (S3 / MinIO)
 
 Transfers data in-memory directly utilizing strictly `boto3`. No local disk space is ever required during pipeline routing.
 
@@ -77,7 +77,7 @@ sink = S3Sink(
 
 ---
 
-## 🗄️ Database Connectors (Postgres / MySQL / SQLite)
+## Database Connectors (Postgres / MySQL / SQLite)
 
 Native database protocols mapping zero-copy direct queries via `connectorx` reading protocols and `adbc` / `sqlalchemy` optimized writing blocks.
 
@@ -89,7 +89,15 @@ Native database protocols mapping zero-copy direct queries via `connectorx` read
 *   `--sink-type postgres` | `mysql` | `sqlite`
 *   `--sink-uri "protocol://credentials..."`
 *   `--sink-table "target_table_name"`
-*   `--sink-batch-size 5000` (Optional)
+*   `--sink-if-exists replace` (Choices: `replace` (default), `append`, `fail`. Dictates idempotency)
+*   `--sink-batch-size 5000` (Optional. Caps streaming memory consumption)
+
+### Fault Tolerance, Memory & Idempotency
+
+Database extractors are strictly typed to act predictably when pipelining large data volumes:
+1. **Idempotency Defaults** (`--sink-if-exists replace`): Running `detl` twice against the same data pipeline guarantees identical outcomes natively by safely tearing down the target `sink-table` and rewriting schemas to match the manifest. Override passing `append` to map new valid entries sequentially.
+2. **Memory Overflows** (`--...-batch-size 50000`): Avoid OOM (Out Of Memory) node crashes when extracting millions of rows via `PostgresSource` by strictly declaring the maximum chunk limits. `detl` streams data in constrained iterations.
+3. **Hard Failures**: If the `source` table is missing, the API crashes immediately with `[error]Source/Sink Connection Error:[/error]`, preventing "phantom runs". Null tables return error outputs matching strict DB paradigms.
 
 ### Python API
 ```python
@@ -117,7 +125,7 @@ sink = MySQLSink(
 
 ---
 
-## 📁 File System Connectors (CSV / Parquet / Excel)
+## File System Connectors (CSV / Parquet / Excel)
 
 Polars-native highly tuned binary abstractions pointing directly at physical disk targets. Automatically evaluates formats lazily avoiding out-of-memory evaluation errors.
 

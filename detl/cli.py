@@ -98,9 +98,13 @@ def build_sink(args: argparse.Namespace) -> Sink:
     except ValueError:
         raise ValueError("sink-batch-size must be an integer")
         
-    if stype == "postgres": return PostgresSink(args.sink_uri, args.sink_table, batch_size=args.sink_batch_size)
-    if stype == "mysql": return MySQLSink(args.sink_uri, args.sink_table, batch_size=args.sink_batch_size)
-    if stype == "sqlite": return SQLiteSink(args.sink_uri, args.sink_table, batch_size=args.sink_batch_size)
+    db_kwargs = {"batch_size": args.sink_batch_size}
+    if args.sink_if_exists:
+        db_kwargs["if_table_exists"] = args.sink_if_exists
+        
+    if stype == "postgres": return PostgresSink(args.sink_uri, args.sink_table, **db_kwargs)
+    if stype == "mysql": return MySQLSink(args.sink_uri, args.sink_table, **db_kwargs)
+    if stype == "sqlite": return SQLiteSink(args.sink_uri, args.sink_table, **db_kwargs)
     if stype == "csv": return CsvSink(args.sink_uri)
     if stype == "parquet": return ParquetSink(args.sink_uri)
     if stype == "excel": return ExcelSink(args.sink_uri)
@@ -131,6 +135,7 @@ def main() -> None:
     parser.add_argument("--sink-type", type=str, required=False, help="Sink connector type (postgres, mysql, sqlite, csv, parquet, excel, s3)")
     parser.add_argument("--sink-uri", type=str, required=False, help="Connection string or filepath for Sink")
     parser.add_argument("--sink-table", type=str, required=False, help="Target table name for Database sinks")
+    parser.add_argument("--sink-if-exists", type=str, choices=["replace", "append", "fail"], required=False, help="Database table collision strategy")
     parser.add_argument("--sink-batch-size", type=str, required=False, help="Optional batch size for chunked database writing")
     
     parser.add_argument("--s3-endpoint-url", type=str, required=False, help="Optional Endpoint URL for S3/MinIO connections.")
