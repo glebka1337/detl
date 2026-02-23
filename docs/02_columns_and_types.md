@@ -89,3 +89,32 @@ columns:
       tactic: "fill_value"
       value: 20240101 # FAILS: detl will natively block numeric fallbacks on date columns!
 ```
+
+---
+
+### Output Formatting and Aliasing (`rename`)
+Because `detl` is fundamentally a structural ETL orchestrator, native Polars datatypes are maintained strictly in memory through the entire transformational mapping pipeline.
+
+However, sometimes you need the exported shape of the data to differ from internal evaluation formats. `detl` applies structural output mutations as the **absolute final step** before pushing data to a Connector.
+
+#### Date Output Formatting
+If a column is typed as `date` or `datetime`, and a `format.output` is defined alongside the parser format, `detl` will stringify the native Temporal object specifically to the assigned schema immediately before writing to Sinks like CSVs or external APIs.
+
+```yaml
+columns:
+  birth_date:
+    dtype: date
+    format: 
+      input: "%Y-%m-%d" # Read source as ISO
+      output: "%d.%m.%Y" # Push output as European format (e.g. 10.10.2025)
+```
+
+#### Column Renaming
+To map an evaluated column to a different alias in the target system (e.g., standardizing Legacy SQL naming conventions to generic API payloads), use the `rename` directive. 
+
+```yaml
+columns:
+  Legacy_Database_Timestamp_Field:
+    rename: "created_at" # Output connector will write the datastream using this property name
+    dtype: datetime
+```

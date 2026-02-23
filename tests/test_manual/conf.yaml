@@ -13,7 +13,3 @@ columns:
     format:
       input: "%Y-%m-%d"
       output: "%d.%m.%Y"
-    
-    on_null:
-      tactic: "fil_value"
-      value: 1234

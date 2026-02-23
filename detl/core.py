@@ -38,6 +38,7 @@ class Processor:
         df = self._apply_constraints(df)
         df = self._handle_duplicates(df)
         df = self._run_pipeline(df)
+        df = self._apply_outputs(df)
         
         self.df = df
         
@@ -162,4 +163,18 @@ class Processor:
     def _run_pipeline(self, df: pl.DataFrame | pl.LazyFrame) -> pl.DataFrame | pl.LazyFrame:
         if self.manifest.pipeline:
             df = apply_pipeline(df, self.manifest.pipeline)
+        return df
+
+    def _apply_outputs(self, df: pl.DataFrame | pl.LazyFrame) -> pl.DataFrame | pl.LazyFrame:
+        """Applies explicit column renams and format overrides before sinking."""
+        # Process structural outputs like Temporal stringifying
+        for col_name, col_def in self.manifest.columns.items():
+            if col_def.date_format and hasattr(col_def.date_format, "out_format") and col_def.date_format.out_format:
+                df = df.with_columns(pl.col(col_name).dt.to_string(col_def.date_format.out_format).alias(col_name))
+
+        # Process arbitrary column remaps natively
+        renames = {old_name: col_def.rename for old_name, col_def in self.manifest.columns.items() if col_def.rename}
+        if renames:
+            df = df.rename(renames)
+            
         return df
