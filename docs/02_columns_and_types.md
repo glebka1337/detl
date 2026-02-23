@@ -26,6 +26,18 @@ columns:
 
 ---
 
+### Implicit Type Casting (Coercion)
+`detl` leverages Polars' native type casting engine (`strict=False` by default for primitives). This means the engine will attempt to coerce incoming data into your defined `dtype` automatically if a logical path exists, rather than crashing immediately.
+
+**Common Implicit Casts:**
+- `integer/float` ➔ `string`: Numbers are cleanly stringified (e.g., `12.5` becomes `"12.5"`).
+- `integer/float` ➔ `boolean`: `0` or `0.0` translates to `false`, while any non-zero number translates to `true`.
+- `string` ➔ `numeric`: The engine will attempt to parse valid number strings. Unparseable strings become `null` and are subsequently handled by your `on_null` tactic.
+
+*Note: If you are relying on strict zero-to-false mappings (e.g., mapping `Catering_Cost: 100` to `boolean: true`), ensure this behavior is intentional.*
+
+---
+
 ### Date Formatting (`format`)
 If `dtype` is `date` or `datetime`, a specialized parsing block `format` can be attached to guide formatting and handle unparseable strings.
 

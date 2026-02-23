@@ -8,8 +8,21 @@ conf:
 
 columns:
   Flight_Date:
-    
+    rename: "FlyDate"
     dtype: date
     format:
       input: "%Y-%m-%d"
       output: "%d.%m.%Y"
+  
+  Ancillary_Revenue:
+    dtype: string
+    on_null:
+      tactic: "fill_value"
+      value: "1234"
+  
+  Catering_Cost:
+    dtype: boolean
+  
+
+pipeline:
+  - filter: "Flight_Hours = 5"

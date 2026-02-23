@@ -15,6 +15,8 @@ class ColumnDef(BaseModel):
 
     @model_validator(mode='after')
     def check_column_logic(self) -> 'ColumnDef':
+        if self.date_format is not None and self.dtype not in [DType.DATE, DType.DATETIME]:
+            raise ValueError(f"Format configuration (format) can only be applied to 'date' or 'datetime' columns.")
         validate_type_logic(self.dtype, self.constraints, self.on_null, context="")
         return self
 
@@ -53,16 +55,4 @@ class Manifesto(BaseModel):
     columns: Dict[str, ColumnDef] = Field(default_factory=dict)
     pipeline: Optional[List[Dict[str, Any]]] = None
 
-    @model_validator(mode='after')
-    def apply_defaults(self) -> 'Manifesto':
-        if not self.conf.defaults:
-            return self
 
-        for col_name, col_def in self.columns.items():
-            default_policy = self.conf.defaults.get(col_def.dtype)
-            if default_policy:
-                if default_policy.on_null and not col_def.on_null:
-                    col_def.on_null = default_policy.on_null
-                if default_policy.constraints and not col_def.constraints:
-                    col_def.constraints = default_policy.constraints
-        return self

@@ -17,14 +17,17 @@ class Config:
             if isinstance(spec, (str, Path)):
                 self._manifest = Manifesto.parse_file(spec)
             elif isinstance(spec, dict):
-                self._manifest = Manifesto(**spec)
+                self._manifest = Manifesto.model_validate(spec)
             else:
                 raise ConfigError(f"Config must be initialized with a filepath (str/Path) or a dictionary. Got: {type(spec)}")
         except ValidationError as e:
             messages = []
             for err in e.errors():
-                loc = ".".join([str(x) for x in err['loc']])
-                messages.append(f"  - [{loc}]: {err['msg']}")
+                loc = ".".join([str(x) for x in err.get('loc', [])])
+                if not loc:
+                    messages.append(f"  - {{Root/Unknown}}: {err.get('msg', 'Unknown error')} (Input: {err.get('input', 'N/A')})")
+                else:
+                    messages.append(f"  - {{{loc}}}: {err.get('msg', 'Unknown error')}")
             err_msg = "\n".join(messages)
             raise ConfigError(f"Invalid Data Contract YAML:\n{err_msg}")
 

@@ -29,6 +29,7 @@ class Processor:
         """
         df = source.read()
         
+        self._apply_global_defaults()
         self._infer_schema(df)
         self._validate_schema_vs_data(df)
 
@@ -47,6 +48,19 @@ class Processor:
             return None
             
         return df
+
+    def _apply_global_defaults(self) -> None:
+        """Hydrates empty column definitions with top-level defaults before execution mapping."""
+        if not self.manifest.conf.defaults:
+            return
+
+        for col_name, col_def in self.manifest.columns.items():
+            default_policy = self.manifest.conf.defaults.get(col_def.dtype)
+            if default_policy:
+                if default_policy.on_null and not col_def.on_null:
+                    col_def.on_null = default_policy.on_null
+                if default_policy.constraints and not col_def.constraints:
+                    col_def.constraints = default_policy.constraints
 
     def _infer_schema(self, df: pl.DataFrame | pl.LazyFrame) -> None:
         """Dynamically infer schemas to define column types that have missing explicit YAML mapping.

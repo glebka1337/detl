@@ -164,7 +164,10 @@ def main() -> None:
         processor = Processor(config)
         processor.execute(source=source_connector, sink=sink_connector)
     except pl.exceptions.PolarsError as e:
-        console.print(f"[error]Polars computation error:[/error]\n{e}")
+        error_msg = str(e)
+        if "Resolved plan until failure:" in error_msg:
+            error_msg = error_msg.split("Resolved plan until failure:")[0].strip()
+        console.print(f"[error]Polars computation error:[/error]\n{error_msg}")
         sys.exit(1)
     except ConnectionConfigurationError as e:
         console.print(f"[error]Source/Sink Connection Error:[/error]\n{e}")
