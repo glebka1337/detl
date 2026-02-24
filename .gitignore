@@ -52,3 +52,6 @@ dmypy.json
 
 # Manual Testing Environment
 tests/manual/
+
+# Marketing
+MEDIUM_DRAFT.md
