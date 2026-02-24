@@ -13,24 +13,28 @@
       
       
       
+        <link rel="prev" href="../02_columns_and_types/">
+      
+      
+        <link rel="next" href="../04_constraints/">
       
       
         
       
       
-      <link rel="icon" href="/assets/images/favicon.png">
+      <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
     
     
       
-        <title>detl</title>
+        <title>Null Tactics - detl</title>
       
     
     
-      <link rel="stylesheet" href="/assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="/assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -49,7 +53,7 @@
       
     
     
-    <script>__md_scope=new URL("/",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -73,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#3-handling-missing-data-on_null" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -83,7 +92,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="/." title="detl" class="md-header__button md-logo" aria-label="detl" data-md-component="logo">
+    <a href=".." title="detl" class="md-header__button md-logo" aria-label="detl" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -103,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              
+              Null Tactics
             
           </span>
         </div>
@@ -216,7 +225,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="/." class="md-tabs__link">
+      <a href=".." class="md-tabs__link">
         
   
   
@@ -237,7 +246,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="/01_configuration/" class="md-tabs__link">
+        <a href="../01_configuration/" class="md-tabs__link">
           
   
   
@@ -253,11 +262,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="/03_null_tactics/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
           
   
   
@@ -277,7 +288,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="/07_connector_api_reference/" class="md-tabs__link">
+        <a href="../07_connector_api_reference/" class="md-tabs__link">
           
   
   
@@ -311,7 +322,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="/." title="detl" class="md-nav__button md-logo" aria-label="detl" data-md-component="logo">
+    <a href=".." title="detl" class="md-nav__button md-logo" aria-label="detl" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -341,7 +352,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         
   
   
@@ -422,7 +433,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/01_configuration/" class="md-nav__link">
+      <a href="../01_configuration/" class="md-nav__link">
         
   
   
@@ -450,7 +461,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/02_columns_and_types/" class="md-nav__link">
+      <a href="../02_columns_and_types/" class="md-nav__link">
         
   
   
@@ -482,28 +493,31 @@
       
   
   
+    
   
   
+  
     
     
     
     
+      
+        
+        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   
@@ -521,7 +535,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -536,10 +550,19 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="/03_null_tactics/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -555,6 +578,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -567,7 +591,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/04_constraints/" class="md-nav__link">
+      <a href="../04_constraints/" class="md-nav__link">
         
   
   
@@ -595,7 +619,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/05_pipeline/" class="md-nav__link">
+      <a href="../05_pipeline/" class="md-nav__link">
         
   
   
@@ -623,7 +647,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/06_connectors/" class="md-nav__link">
+      <a href="../06_connectors/" class="md-nav__link">
         
   
   
@@ -712,7 +736,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/07_connector_api_reference/" class="md-nav__link">
+      <a href="../07_connector_api_reference/" class="md-nav__link">
         
   
   
@@ -757,6 +781,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -769,8 +795,70 @@
               
               <article class="md-content__inner md-typeset">
                 
-  <h1>404 - Not found</h1>
+                  
 
+
+  
+  
+
+
+<h1 id="3-handling-missing-data-on_null">3. Handling Missing Data (<code>on_null</code>)</h1>
+<p>Defines how native <code>null</code> arrays are imputed.</p>
+<p>Available <code>tactic</code> options:
+1. <strong><code>drop_row</code></strong>: Drops the entire row containing a missing value.
+2. <strong><code>fail</code></strong>: Hard-aborts pipeline (Be very cautious using this on user-provided streams).
+3. <strong><code>fill_value</code></strong>: Hardcodes a static given parameter <code>value</code>. (e.g., <code>value: "Unknown"</code>).
+4. <strong><code>fill_mean</code></strong>: Replaces nulls with the average (Requires numerical <code>int</code> / <code>float</code> columns).
+5. <strong><code>fill_median</code></strong>: Replaces nulls with the median (Better for skewed numerical distributions like Income).
+6. <strong><code>fill_min</code></strong>: Replaces nulls with the minimum value of the column (Requires numerical or date).
+7. <strong><code>fill_max</code></strong>: Replaces nulls with the maximum value of the column (Requires numerical or date).
+8. <strong><code>fill_most_frequent</code></strong>: Replaces nulls with the string or int mode of the column.
+9. <strong><code>ffill</code></strong>: Forward-fills linearly.
+10. <strong><code>bfill</code></strong>: Backward-fills linearly.</p>
+<hr />
+<p><strong>DO (Intelligent Median Imputation):</strong>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">columns</span><span class="p">:</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">salary</span><span class="p">:</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">dtype</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">float</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nt">on_null</span><span class="p">:</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">      </span><span class="nt">tactic</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;fill_median&quot;</span><span class="w"> </span><span class="c1"># Safely estimates a salary for missing users without skewing the dataset with extremes.</span>
+</span></code></pre></div></p>
+<p><strong>DO (Fallbacks for Strings):</strong>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">columns</span><span class="p">:</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">country</span><span class="p">:</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">dtype</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="nt">on_null</span><span class="p">:</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">      </span><span class="nt">tactic</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;fill_value&quot;</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">      </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Unknown&quot;</span><span class="w"> </span><span class="c1"># Defaults empty strings to strictly &#39;Unknown&#39;</span>
+</span></code></pre></div></p>
+<p><strong>DON'T (Logical Fallacies):</strong>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">columns</span><span class="p">:</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">username</span><span class="p">:</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">dtype</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">on_null</span><span class="p">:</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">      </span><span class="nt">tactic</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;fill_mean&quot;</span><span class="w"> </span><span class="c1"># DON&#39;T DO THIS. You cannot calculate the &#39;average&#39; of a string. Pydantic will block this manifest immediately.</span>
+</span></code></pre></div></p>
+<p><strong>DON'T (Missing Required Params):</strong>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">columns</span><span class="p">:</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">role</span><span class="p">:</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">dtype</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="nt">on_null</span><span class="p">:</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">      </span><span class="nt">tactic</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;fill_value&quot;</span><span class="w"> </span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">      </span><span class="c1"># DON&#39;T DO THIS! You forgot to supply the `value: &quot;guest&quot;` property. Pydantic will block this manifest.</span>
+</span></code></pre></div></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
               </article>
             </div>
           
@@ -807,10 +895,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "/", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "search.suggest", "search.highlight", "content.code.copy"], "search": "/assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="/assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
